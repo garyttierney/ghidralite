@@ -1,0 +1,70 @@
+[versions]
+commonmark = "0.22.0"
+composeDesktop = "1.6.10-dev1561"
+decompose = "2.2.2"
+detekt = "1.23.4"
+dokka = "1.8.20"
+ideaGradlePlugin = "1.17.1"
+intellij = "241.14494.241"
+ghidra = "11.1"
+jewel = "0.17.0"
+jna = "5.14.0"
+kotlin = "1.9.23"
+kotlinSarif = "0.5.0"
+kotlinpoet = "1.15.2"
+kotlinterGradlePlugin = "3.16.0"
+kotlinxSerialization = "1.5.1"
+kotlinxBinaryCompat = "0.14.0"
+ksp = "1.9.23-1.0.20"
+poko = "0.13.1"
+
+[libraries]
+
+commonmark-core = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
+commonmark-ext-autolink = { module = "org.commonmark:commonmark-ext-autolink", version.ref = "commonmark" }
+
+decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+decompose-extensions-jetbrains = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
+filePicker = { module = "com.darkrockstudios:mpfilepicker", version = "3.1.0" }
+
+intellij-text-matching = { module = "com.jetbrains.intellij.platform:util-text-matching", version.ref = "intellij" }
+jetbrains-compose-splitpane = { module = "org.jetbrains.compose.components:components-splitpane-desktop", version.ref = "composeDesktop" }
+kotlinSarif = { module = "io.github.detekt.sarif4k:sarif4k", version.ref = "kotlinSarif" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+
+jewel-standalone = { module = "org.jetbrains.jewel:jewel-int-ui-standalone-241", version.ref = "jewel" }
+jewel-decorated-window = { module = "org.jetbrains.jewel:jewel-int-ui-decorated-window-241", version.ref = "jewel" }
+
+jna-core = { module = "net.java.dev.jna:jna", version.ref = "jna" }
+
+ghidra-platform = { module = "ghidra:ghidra", version.ref = "ghidra" }
+ghidra-base = { module = "ghidra:Base", version.ref = "ghidra" }
+ghidra-project = { module = "ghidra:Project", version.ref = "ghidra" }
+ghidra-software-modeling = { module = "ghidra:SoftwareModeling", version.ref = "ghidra" }
+
+# Plugin libraries for build-logic's convention plugins to use to resolve the types/tasks coming from these plugins
+detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+kotlinter-gradlePlugin = { module = "org.jmailen.gradle:kotlinter-gradle", version.ref = "kotlinterGradlePlugin" }
+kotlinx-binaryCompatValidator-gradlePlugin = { module = "org.jetbrains.kotlinx:binary-compatibility-validator", version.ref = "kotlinxBinaryCompat" }
+poko-gradlePlugin = { module = "dev.drewhamilton.poko:poko-gradle-plugin", version.ref = "poko" }
+
+[bundles]
+ghidra-all-modules = ["ghidra-base", "ghidra-project", "ghidra-software-modeling"]
+
+[plugins]
+composeDesktop = { id = "org.jetbrains.compose", version.ref = "composeDesktop" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+ideaGradlePlugin = { id = "org.jetbrains.intellij", version.ref = "ideaGradlePlugin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinx-binaryCompatValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinxBinaryCompat" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinterGradlePlugin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+poko = { id = "dev.drewhamilton.poko", version.ref = "poko" }

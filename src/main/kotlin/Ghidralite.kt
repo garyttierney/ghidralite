@@ -1,31 +1,24 @@
 @file:OptIn(ExperimentalComposeUiApi::class)
 
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.awt.SwingPanel
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.ResourceLoader
-import androidx.compose.ui.res.loadSvgPainter
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.window.application
-import docking.Tool
+package io.github.garyttierney.ghidralite
+
+import androidx.compose.ui.*
+import androidx.compose.ui.graphics.painter.*
+import androidx.compose.ui.res.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.*
 import generic.theme.ApplicationThemeManager
 import generic.theme.builtin.FlatDarkTheme
 import ghidra.GhidraApplicationLayout
 import ghidra.GhidraLaunchable
 import ghidra.GhidraLauncher
-import ghidra.app.util.viewer.format.FormatManager
-import ghidra.app.util.viewer.listingpanel.ListingPanel
 import ghidra.framework.Application
 import ghidra.framework.GhidraApplicationConfiguration
-import ghidra.framework.model.ProjectLocator
-import ghidra.framework.options.ToolOptions
-import ghidra.program.model.listing.Program
-import ghidra.util.task.TaskMonitor
-import ghidracore.GhidraliteProjectManager
+import io.github.garyttierney.ghidralite.ui.root.GhidraliteRoot
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.intui.standalone.Inter
 import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
@@ -35,31 +28,32 @@ import org.jetbrains.jewel.intui.standalone.theme.default
 import org.jetbrains.jewel.intui.window.decoratedWindow
 import org.jetbrains.jewel.intui.window.styling.dark
 import org.jetbrains.jewel.ui.ComponentStyling
-import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.window.DecoratedWindow
-import org.jetbrains.jewel.window.TitleBar
 import org.jetbrains.jewel.window.styling.TitleBarStyle
 import java.io.InputStream
+import java.util.concurrent.Executors
 import javax.swing.SwingUtilities
+
+val GhidraWorkerScope = CoroutineScope(SupervisorJob() + Executors.newWorkStealingPool().asCoroutineDispatcher())
+val GhidraWorkerContext = GhidraWorkerScope.coroutineContext
 
 class Ghidralite : GhidraLaunchable {
     override fun launch(layout: GhidraApplicationLayout, args: Array<out String>) {
+
         Application.initializeApplication(layout, GhidraApplicationConfiguration())
+
         SwingUtilities.invokeLater {
             ApplicationThemeManager.getInstance().setTheme(FlatDarkTheme())
         }
 
         val icon = svgResource("icons/jewel-logo.svg")
-        val projectManager = GhidraliteProjectManager()
-        val projectLocator = ProjectLocator("/home/gtierney", "android.gpr")
-        val project = projectManager.openProject(projectLocator, false, false)
-        val file = project.getProjectData(projectLocator).getFile("/eldenring.exe")
-        val program = file.getDomainObject(this, false, false, TaskMonitor.DUMMY) as Program
 
-        val listing = ListingPanel(FormatManager(ToolOptions("_unused"), ToolOptions("Listing Fields")), program)
         application {
+            val windowState = rememberWindowState()
+
             val textStyle = JewelTheme.createDefaultTextStyle(fontFamily = FontFamily.Inter)
             val themeDefinition = JewelTheme.darkThemeDefinition(defaultTextStyle = textStyle)
+
             IntUiTheme(
                 theme = themeDefinition,
                 styling = ComponentStyling.default().decoratedWindow(
@@ -69,20 +63,16 @@ class Ghidralite : GhidraLaunchable {
             ) {
                 DecoratedWindow(
                     onCloseRequest = { exitApplication() },
-                    icon = icon,
+                    state = windowState,
+                    icon = icon
                 ) {
-                    TitleBar { Text("Ghidralite") }
-                    SwingPanel(
-                        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                        factory = {
-                            listing
-                        },
-                    )
+                    GhidraliteRoot()
                 }
             }
         }
     }
 }
+
 
 fun main(args: Array<out String>) {
     val ghidraArgs = arrayOf(Ghidralite::class.qualifiedName)
