@@ -8,6 +8,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.unit.*
 import ghidra.framework.model.DomainFolder
 import ghidra.framework.model.Project
+import ghidra.program.database.ProgramDB
 import ghidra.program.model.listing.Program
 import ghidra.util.task.TaskMonitor
 import io.github.garyttierney.ghidralite.GhidraWorkerContext
@@ -52,23 +53,28 @@ fun Onboarding(onOnboardingComplete: (Workspace) -> Unit) {
             }
         } else {
             LazyColumn(
-                modifier = Modifier.border(1.dp, JewelTheme.globalColors.borders.normal)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.border(1.dp, JewelTheme.globalColors.borders.normal).width(360.dp),
             ) {
                 for (file in files) {
                     item(key = file.fileID) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text("${file.name} - ${file.contentType}")
+                        Row(modifier = Modifier.padding(vertical = 8.dp)) {
+                            Text(file.name, modifier = Modifier.weight(1f))
 
-                            DefaultButton(onClick = {
+                            DefaultButton(
+                                onClick = {
                                 projectLoadScope.launch {
                                     val workspace = withContext(Dispatchers.IO) {
-                                        Workspace(
-                                            project!!,
-                                            file.getDomainObject(
-                                                GhidraWorkerContext, false, false, TaskMonitor.DUMMY
-                                            ) as Program
+                                        val program = file.getDomainObject(
+                                            GhidraWorkerContext,
+                                            false,
+                                            false,
+                                            TaskMonitor.DUMMY
                                         )
+
+                                        Workspace.load(project!!, program as ProgramD B)
                                     }
+
                                     onOnboardingComplete(workspace)
 
                                 }

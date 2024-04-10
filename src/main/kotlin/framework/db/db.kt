@@ -4,7 +4,7 @@ import db.DBRecord
 import db.RecordIterator
 import db.Table
 
-interface Record {
+interface GhidraRecord {
     val inner: DBRecord
 }
 
@@ -14,8 +14,8 @@ fun RecordIterator.asSequence() = sequence {
     }
 }
 
-abstract class GhidraTable<T : Record>(private val table: Table) {
+abstract class GhidraTable<T : GhidraRecord>(private val table: Table) {
     protected abstract fun from(record: DBRecord): T
 
-    fun allAfter(since: Long = Long.MIN_VALUE) = table.iterator(since).asSequence()
+    fun allAfter(since: Long = Long.MIN_VALUE) = table.iterator(since).asSequence().map(::from)
 }

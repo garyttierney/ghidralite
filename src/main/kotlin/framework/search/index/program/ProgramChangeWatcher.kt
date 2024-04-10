@@ -1,9 +1,10 @@
-package io.github.garyttierney.ghidralite.framework.indexer
+package io.github.garyttierney.ghidralite.framework.search.index.program
 
 import ghidra.framework.model.DomainObjectChangedEvent
 import ghidra.framework.model.DomainObjectListener
 import ghidra.framework.model.EventType
 import ghidra.program.model.listing.Program
+import io.github.garyttierney.ghidralite.framework.search.index.IndexChange
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
@@ -16,20 +17,7 @@ import java.lang.reflect.Field
 import java.util.*
 
 
-interface ProgramChangeSnapshotStrategy<out T : Any, in OldT : Any, in NewT : Any> {
-    fun snapshot(old: OldT, new: NewT): T
-}
-
-typealias ErasedProgramChangeSnapshotStrategy = ProgramChangeSnapshotStrategy<Any, Any, Any>
-
-data class ProgramChangeEventInterest<T : Any>(
-    val event: EventType,
-    val snapshotPolicy: ProgramChangeSnapshotStrategy<T, Any, Any>
-)
-
-data class ProgramChange<T>(val eventType: EventType, val program: Program, val value: T)
-
-data class ErasedEventInterestInfo(val snapshotStrategy: ErasedProgramChangeSnapshotStrategy, val ty: Class<*>)
+data class ProgramChange<T>(val eventType: EventType, val program: Program, override val value: T) : IndexChange<T>
 
 class ProgramChangeWatcher(private val scope: CoroutineScope) : DomainObjectListener {
     companion object {
@@ -50,9 +38,11 @@ class ProgramChangeWatcher(private val scope: CoroutineScope) : DomainObjectList
 
     private val changeFlow = changeChannel.receiveAsFlow()
 
-    fun <T : Any> registerInterest(group: ProgramChangeEventInterest<T>): Flow<ProgramChange<T>> {
+    fun <T : Any> registerInterest(group: ProgramChangeInterest<T>): Flow<ProgramChange<T>> {
+        group.events.forEach { interestBits.set(it.id) }
+
         return changeFlow.mapNotNull {
-            if (it.eventType != group.event) {
+            if (group.events.contains(it.eventType)) {
                 null
             } else {
                 @Suppress("UNCHECKED_CAST")
@@ -73,7 +63,7 @@ class ProgramChangeWatcher(private val scope: CoroutineScope) : DomainObjectList
             for (change in ev) {
                 // Verified to be non-null by the `eventBits` intersection.
                 val info = interestTable[change.eventType.id]!!
-                val snapshot = info.snapshotStrategy.snapshot(change.oldValue, change.newValue)
+                val snapshot = info.snapshotStrategy.snapshot(change.eventType, change.oldValue, change.newValue)
 
                 changeChannel.send(ProgramChange(change.eventType, program, snapshot))
             }

@@ -13,10 +13,10 @@ import db.Table
         GhidraField(name = "name", type = GhidraType.String)
     ]
 )
-interface Symbol : Record {
+interface SymbolRecord : GhidraRecord {
     var name: String
 }
 
-class SymbolDbTable(inner: Table) : GhidraTable<Symbol>(inner) {
-    override fun from(record: DBRecord) = SymbolImpl(record)
+class SymbolDbTable(inner: Table) : GhidraTable<SymbolRecord>(inner) {
+    override fun from(record: DBRecord) = SymbolRecordImpl(record)
 }
