@@ -2,12 +2,21 @@
 
 package io.github.garyttierney.ghidralite
 
-import androidx.compose.ui.*
-import androidx.compose.ui.graphics.painter.*
-import androidx.compose.ui.res.*
-import androidx.compose.ui.text.font.*
-import androidx.compose.ui.unit.*
-import androidx.compose.ui.window.*
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.ResourceLoader
+import androidx.compose.ui.res.loadSvgPainter
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import generic.theme.ApplicationThemeManager
 import generic.theme.builtin.FlatDarkTheme
 import ghidra.GhidraApplicationLayout
@@ -36,6 +45,7 @@ import javax.swing.SwingUtilities
 
 val GhidraWorkerScope = CoroutineScope(SupervisorJob() + Executors.newWorkStealingPool().asCoroutineDispatcher())
 val GhidraWorkerContext = GhidraWorkerScope.coroutineContext
+val LocalWindowPosition = compositionLocalOf<WindowPosition> { WindowPosition(Alignment.Center) }
 
 class Ghidralite : GhidraLaunchable {
     override fun launch(layout: GhidraApplicationLayout, args: Array<out String>) {
@@ -47,12 +57,13 @@ class Ghidralite : GhidraLaunchable {
         }
 
         val icon = svgResource("icons/jewel-logo.svg")
-
+        val windowSize = IntSize(0, 0)
         application {
             val windowState = rememberWindowState()
 
             val textStyle = JewelTheme.createDefaultTextStyle(fontFamily = FontFamily.Inter)
             val themeDefinition = JewelTheme.darkThemeDefinition(defaultTextStyle = textStyle)
+            val searchBarFocusRequester = remember { FocusRequester() }
 
             IntUiTheme(
                 theme = themeDefinition,
@@ -64,9 +75,12 @@ class Ghidralite : GhidraLaunchable {
                 DecoratedWindow(
                     onCloseRequest = { exitApplication() },
                     state = windowState,
-                    icon = icon
+                    icon = icon,
                 ) {
-                    GhidraliteRoot()
+                    window.state
+                    CompositionLocalProvider(LocalWindowPosition provides windowState.position) {
+                        GhidraliteRoot(searchBarFocusRequester = searchBarFocusRequester)
+                    }
                 }
             }
         }

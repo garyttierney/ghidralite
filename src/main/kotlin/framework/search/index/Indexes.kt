@@ -1,46 +1,44 @@
 package io.github.garyttierney.ghidralite.framework.search.index
 
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
-import java.util.concurrent.locks.ReadWriteLock
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.withLock
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.toCollection
+import kotlinx.coroutines.withContext
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.reflect.KClass
-
-class IndexData(val values: ArrayDeque<Any>, val lock: ReadWriteLock = ReentrantReadWriteLock())
 
 /**
  * Maintains in-memory caches of frequently queried data.
  */
-class Indexes(private val coroutineScope: CoroutineScope) {
-    private val indexes = mutableMapOf<KClass<*>, IndexData>()
+class Indexes {
+    private val indexes = mutableMapOf<KClass<*>, ConcurrentLinkedQueue<*>>()
 
-    suspend fun <T : Any> registerAndLoad(ty: KClass<T>, changeSource: Flow<IndexChange<T>>, bulkLoader: IndexBulkLoader<T>) {
-        val indexData = IndexData(ArrayDeque())
-        indexes[ty] = indexData
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> indexData(ty: KClass<T>) = indexes.computeIfAbsent(ty) {
+        ConcurrentLinkedQueue<T>()
+    } as ConcurrentLinkedQueue<T>
 
-        coroutineScope.launch {
-            changeSource.collect { item ->
-                val lock = indexData.lock.writeLock()
-                lock.withLock {
-                    indexData.values.add(item)
-                }
-            }
-        }
-
-        val loadingItems = bulkLoader.load()
-        val lock = indexData.lock.writeLock()
-
-        loadingItems.collect {
-            lock.withLock {
-                indexData.values.add(it)
-            }
-        }
+    fun <T : Any> write(ty: KClass<T>, values: Collection<T>) {
+        indexData(ty).addAll(values)
     }
 
-    suspend inline fun <reified T : Any> registerAndLoad(changeSource: Flow<IndexChange<T>>, bulkLoader: IndexBulkLoader<T>) {
-        registerAndLoad(T::class, changeSource, bulkLoader)
+    fun <T : Any> query(ty: KClass<T>): Flow<T> = indexData(ty).asFlow()
+
+    inline fun <reified T : Any> query(): Flow<T> = query(T::class)
+
+    suspend fun <T : Any> load(ty: KClass<T>, bulkLoader: IndexBulkLoader<T>) {
+        val data = withContext(Dispatchers.IO) {
+            bulkLoader.load()
+                .parallel()
+                .toList()
+        }
+
+        indexes[ty] = ConcurrentLinkedQueue(data)
+    }
+
+    suspend inline fun <reified T : Any> load(bulkLoader: IndexBulkLoader<T>) {
+        load(T::class, bulkLoader)
     }
 
 }

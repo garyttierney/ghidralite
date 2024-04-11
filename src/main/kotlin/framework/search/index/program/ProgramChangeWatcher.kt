@@ -10,6 +10,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -41,14 +42,7 @@ class ProgramChangeWatcher(private val scope: CoroutineScope) : DomainObjectList
     fun <T : Any> registerInterest(group: ProgramChangeInterest<T>): Flow<ProgramChange<T>> {
         group.events.forEach { interestBits.set(it.id) }
 
-        return changeFlow.mapNotNull {
-            if (group.events.contains(it.eventType)) {
-                null
-            } else {
-                @Suppress("UNCHECKED_CAST")
-                it as ProgramChange<T>
-            }
-        }
+        return changeFlow.filter { group.events.contains(it.eventType) } as Flow<ProgramChange<T>>
     }
 
     override fun domainObjectChanged(ev: DomainObjectChangedEvent) {

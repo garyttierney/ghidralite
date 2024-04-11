@@ -11,13 +11,16 @@ import ghidra.program.model.listing.Program
 import ghidra.program.util.ProgramEvent
 import io.github.garyttierney.ghidralite.GhidraWorkerScope
 import io.github.garyttierney.ghidralite.framework.GhidralitePluginTool
-import io.github.garyttierney.ghidralite.framework.db.SymbolRecord
 import io.github.garyttierney.ghidralite.framework.db.SymbolDbTable
+import io.github.garyttierney.ghidralite.framework.db.SymbolRecord
+import io.github.garyttierney.ghidralite.framework.search.Searcher
+import io.github.garyttierney.ghidralite.framework.search.index.IndexWriter
+import io.github.garyttierney.ghidralite.framework.search.index.Indexes
 import io.github.garyttierney.ghidralite.framework.search.index.program.ProgramChangeSnapshotStrategy
 import io.github.garyttierney.ghidralite.framework.search.index.program.ProgramChangeWatcher
 import io.github.garyttierney.ghidralite.framework.search.index.program.ProgramDbTableLoader
 import io.github.garyttierney.ghidralite.framework.search.index.program.programChangeInterest
-import io.github.garyttierney.ghidralite.framework.search.index.Indexes
+import kotlinx.coroutines.launch
 
 object SymbolSnapshotStrategy : ProgramChangeSnapshotStrategy<SymbolRecord> {
     override fun snapshot(event: EventType, old: Any, new: Any): SymbolRecord {
@@ -29,9 +32,10 @@ object SymbolSnapshotStrategy : ProgramChangeSnapshotStrategy<SymbolRecord> {
     }
 }
 
-class Workspace(val project: Project, val program: Program, val indexes: Indexes) {
+class Workspace(val project: Project, val program: Program, val searcher: Searcher) {
     val tool = GhidralitePluginTool(project)
     val listing = ListingPanel(FormatManager(ToolOptions("unused"), ToolOptions("Listing Fields")), program)
+
 
     init {
         tool.firePluginEvent(ProgramActivatedPluginEvent("Workspace", program))
@@ -39,7 +43,7 @@ class Workspace(val project: Project, val program: Program, val indexes: Indexes
 
     companion object {
         suspend fun load(project: Project, program: ProgramDB): Workspace {
-            val indexes = Indexes(GhidraWorkerScope)
+            val indexes = Indexes()
 
             val changeWatcher = ProgramChangeWatcher(GhidraWorkerScope)
             program.addListener(changeWatcher)
@@ -52,11 +56,19 @@ class Workspace(val project: Project, val program: Program, val indexes: Indexes
                 )
             )
             val symbolDbTable = SymbolDbTable(program.dbHandle.getTable("Symbols"))
-            val symbolLoader = ProgramDbTableLoader(symbolDbTable)
+            val regex = Regex("^case|RTTI|Catch@|Unwind@|switch")
+            val symbolLoader = ProgramDbTableLoader(symbolDbTable) {
+                !it.name.matches(regex)
+            }
+            val symbolIndexWriter = IndexWriter(indexes, SymbolRecord::class)
 
-            indexes.registerAndLoad(symbolChanges, symbolLoader)
+            indexes.load(symbolLoader)
 
-            return Workspace(project, program, indexes)
+            GhidraWorkerScope.launch {
+                symbolIndexWriter.run(symbolChanges)
+            }
+
+            return Workspace(project, program, Searcher(indexes))
         }
     }
 }

@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("jvm")
@@ -9,11 +8,12 @@ plugins {
     alias(libs.plugins.composeDesktop)
 }
 
+val ghidraDistribution = extra["ghidra.dir"] as String
+
 repositories {
     google()
     gradlePluginPortal()
     mavenCentral()
-    mavenLocal()
 
     // JetBrains repositories for compose-desktop and compose-multiplatform
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
@@ -30,7 +30,6 @@ kotlin {
         languageVersion = JavaLanguageVersion.of(17)
     }
 }
-val ghidraDistribution = extra["ghidra.dir"] as String
 
 dependencies {
     implementation(project(":ghidra-schema-ksp"))
@@ -48,7 +47,9 @@ dependencies {
         exclude(group = "org.jetbrains.compose.material")
     }
 
-    implementation(libs.intellij.text.matching)
+    implementation(libs.intellij.util.text.matching)
+    implementation(libs.intellij.util.base)
+    implementation(libs.intellij.icons)
 
     implementation(fileTree(ghidraDistribution) {
         include("**/*.jar")

@@ -72,7 +72,7 @@ fun Onboarding(onOnboardingComplete: (Workspace) -> Unit) {
                                             TaskMonitor.DUMMY
                                         )
 
-                                        Workspace.load(project!!, program as ProgramD B)
+                                        Workspace.load(project!!, program as ProgramDB)
                                     }
 
                                     onOnboardingComplete(workspace)
@@ -81,8 +81,8 @@ fun Onboarding(onOnboardingComplete: (Workspace) -> Unit) {
                             }) {
                                 Text("Open")
                             }
+                            }
                         }
-                    }
                 }
             }
         }
