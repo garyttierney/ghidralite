@@ -1,9 +1,7 @@
 package io.github.garyttierney.ghidralite.framework.search.index
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.toCollection
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.reflect.KClass
@@ -28,13 +26,10 @@ class Indexes {
     inline fun <reified T : Any> query(): Flow<T> = query(T::class)
 
     suspend fun <T : Any> load(ty: KClass<T>, bulkLoader: IndexBulkLoader<T>) {
-        val data = withContext(Dispatchers.IO) {
-            bulkLoader.load()
-                .parallel()
-                .toList()
-        }
+        val items = mutableListOf<T>()
+        bulkLoader.load().flowOn(Dispatchers.IO).toCollection(items)
 
-        indexes[ty] = ConcurrentLinkedQueue(data)
+        indexes[ty] = ConcurrentLinkedQueue(items)
     }
 
     suspend inline fun <reified T : Any> load(bulkLoader: IndexBulkLoader<T>) {
