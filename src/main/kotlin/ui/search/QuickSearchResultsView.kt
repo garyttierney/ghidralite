@@ -62,6 +62,7 @@ fun QuickSearch(
             modifier = Modifier.fillMaxWidth()
                 .focusRequester(focusRequester)
                 .focusable(true)
+                ,
             placeholder = { Text("Type a query to begin searching") },
             interactionSource = interactionSource,
         )

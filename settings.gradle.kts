@@ -27,4 +27,9 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "ghidralite"
-include("ghidra-schema-ksp")
+
+include("ghidralite-core")
+include("ghidralite-core-ksp")
+include("ghidralite-extension")
+include("ghidralite-ui")
+include("ghidralite-standalone")

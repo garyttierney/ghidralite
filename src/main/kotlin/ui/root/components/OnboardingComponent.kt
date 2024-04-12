@@ -1,15 +1,16 @@
 package io.github.garyttierney.ghidralite.ui.main.components
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import ghidra.framework.model.DomainFolder
 import ghidra.framework.model.Project
 import ghidra.program.database.ProgramDB
-import ghidra.program.model.listing.Program
 import ghidra.util.task.TaskMonitor
 import io.github.garyttierney.ghidralite.GhidraWorkerContext
 import io.github.garyttierney.ghidralite.framework.GhidraliteProjectManager
@@ -46,7 +47,10 @@ fun Onboarding(onOnboardingComplete: (Workspace) -> Unit) {
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = Modifier.fillMaxSize().background(JewelTheme.globalColors.paneBackground),
+        contentAlignment = Alignment.Center
+    ) {
         if (project == null) {
             DefaultButton(onClick = { showFilePicker = true }) {
                 Text("Select project (.gpr) file ")
@@ -63,26 +67,26 @@ fun Onboarding(onOnboardingComplete: (Workspace) -> Unit) {
 
                             DefaultButton(
                                 onClick = {
-                                projectLoadScope.launch {
-                                    val workspace = withContext(Dispatchers.IO) {
-                                        val program = file.getDomainObject(
-                                            GhidraWorkerContext,
-                                            false,
-                                            false,
-                                            TaskMonitor.DUMMY
-                                        )
+                                    projectLoadScope.launch {
+                                        val workspace = withContext(Dispatchers.IO) {
+                                            val program = file.getDomainObject(
+                                                GhidraWorkerContext,
+                                                false,
+                                                false,
+                                                TaskMonitor.DUMMY
+                                            )
 
-                                        Workspace.load(project!!, program as ProgramDB)
+                                            Workspace.load(project!!, program as ProgramDB)
+                                        }
+
+                                        onOnboardingComplete(workspace)
+
                                     }
-
-                                    onOnboardingComplete(workspace)
-
-                                }
-                            }) {
+                                }) {
                                 Text("Open")
                             }
-                            }
                         }
+                    }
                 }
             }
         }

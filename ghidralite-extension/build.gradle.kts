@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.23"
+    `ghidralite-conventions`
 }
 
 group = "io.github.garyttierney"
@@ -11,12 +11,6 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation(libs.ksp)
-    implementation(kotlin("stdlib"))
-}
-
-sourceSets.main {
-    java.srcDirs("src/main/kotlin")
 }
 
 tasks.test {

@@ -2,7 +2,7 @@
 
 
 plugins {
-    kotlin("jvm")
+    `ghidralite-conventions`
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.composeDesktop)
@@ -10,30 +10,9 @@ plugins {
 
 val ghidraDistribution = extra["ghidra.dir"] as String
 
-repositories {
-    google()
-    gradlePluginPortal()
-    mavenCentral()
-
-    // JetBrains repositories for compose-desktop and compose-multiplatform
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    maven("https://packages.jetbrains.team/maven/p/kpm/public/")
-
-    // JetBrains repositories for IntelliJ components
-    maven("https://www.jetbrains.com/intellij-repository/releases/")
-    maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
-}
-
-kotlin {
-    jvmToolchain {
-        vendor = JvmVendorSpec.JETBRAINS
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
 dependencies {
-    implementation(project(":ghidra-schema-ksp"))
-    ksp(project(":ghidra-schema-ksp"))
+    implementation(project(":ghidralite-core-ksp"))
+    ksp(project(":ghidralite-core-ksp"))
 
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlinx.serialization.json)

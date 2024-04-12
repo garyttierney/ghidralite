@@ -57,7 +57,7 @@ class Ghidralite : GhidraLaunchable {
         }
 
         val icon = svgResource("icons/jewel-logo.svg")
-        val windowSize = IntSize(0, 0)
+
         application {
             val windowState = rememberWindowState()
 
@@ -78,6 +78,7 @@ class Ghidralite : GhidraLaunchable {
                     icon = icon,
                 ) {
                     window.state
+
                     CompositionLocalProvider(LocalWindowPosition provides windowState.position) {
                         GhidraliteRoot(searchBarFocusRequester = searchBarFocusRequester)
                     }
