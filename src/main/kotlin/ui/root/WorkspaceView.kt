@@ -11,8 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
-import io.github.garyttierney.ghidralite.ui.search.QuickSearchWindow
 import io.github.garyttierney.ghidralite.framework.search.SearchResult
+import io.github.garyttierney.ghidralite.ui.search.QuickSearch
+import io.github.garyttierney.ghidralite.ui.search.QuickSearchWindow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,7 +22,6 @@ import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.rememberSplitPaneState
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.*
-import java.util.concurrent.PriorityBlockingQueue
 
 
 @OptIn(ExperimentalSplitPaneApi::class)
@@ -58,20 +58,8 @@ fun WorkspaceView(model: Workspace) = key(model) {
             .windowInsetsPadding(WindowInsets.safeDrawing)
             .focusable(true)
     ) {
-
-        HorizontalSplitPane(splitPaneState = state, modifier = Modifier.onPreviewKeyEvent(keyboardHandler)) {
-            first(minSize = 8.dp) {
-                Text("Hello")
-            }
-
-            second {
-            }
-        }
-
-        QuickSearchWindow(
-            visible = workspaceSearchOpen,
-            results = searchResults,
-            onResultSelected = {},
+        QuickSearch(
+            items = searchResults,
             query = searchQuery,
             onQueryChanged = {
                 searchQuery = it
@@ -86,10 +74,8 @@ fun WorkspaceView(model: Workspace) = key(model) {
                     }
                 }
             },
-            queryFocus = searchInputFocus,
-            onCloseRequest = {
-                workspaceSearchOpen = false
-            }
+            onResultSelected = {},
+            focusRequester = searchInputFocus,
         )
     }
 }
