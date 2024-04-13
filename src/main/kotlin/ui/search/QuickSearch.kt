@@ -2,10 +2,8 @@ package io.github.garyttierney.ghidralite.ui.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusGroup
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,7 +20,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.ImeOptions
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
@@ -55,6 +52,7 @@ fun QuickSearch(
     val itemListState = rememberSelectableLazyListState()
     val itemKeys by derivedStateOf { items.map { SelectableLazyListKey.Selectable(it.element.key) }.toList() }
     val itemSelected by derivedStateOf { items.find { it.element.key == itemListState.selectedKeys.firstOrNull() } }
+    val scope = rememberCoroutineScope()
 
     val handleListAction = { event: KeyEvent ->
         val itemListHandler = listActions.handleOnKeyEvent(event, itemKeys, itemListState, SelectionMode.Single)
@@ -66,14 +64,16 @@ fun QuickSearch(
         }
     }
 
-    LaunchedEffect(query) {
-        itemListState.scrollToItem(0)
-        itemListState.lastActiveItemIndex = -1
-    }
-
     Row {
         Column(modifier = Modifier.onPreviewKeyEvent(handleListAction).focusRequester(focusRequester).focusGroup()) {
-            QuickSearchInput(query = query, onQueryChanged = onQueryChanged)
+            QuickSearchInput(query = query, onQueryChanged = {
+                scope.launch {
+                    itemListState.scrollToItem(0, animateScroll = true)
+                    itemListState.lastActiveItemIndex = -1
+                }
+
+                onQueryChanged(it)
+            })
 
             QuickSearchResultList(
                 items = items,
@@ -158,8 +158,6 @@ fun QuickSearchResultList(
                 }
             }
         }
-
-
 
         VerticalScrollbar(
             rememberScrollbarAdapter(state.lazyListState),
