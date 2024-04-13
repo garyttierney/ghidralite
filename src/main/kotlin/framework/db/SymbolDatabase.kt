@@ -3,9 +3,44 @@ package io.github.garyttierney.ghidralite.framework.db
 import GhidraField
 import GhidraSchema
 import GhidraType
+import androidx.compose.runtime.Composable
+import com.intellij.icons.ExpUiIcons
 import db.DBRecord
 import db.Table
 import ghidra.program.model.symbol.SymbolType
+import io.github.garyttierney.ghidralite.framework.LookupElement
+import org.jetbrains.jewel.ui.component.*
+
+data class SymbolLookupDetails(
+    val id: Long,
+    val type: SymbolType,
+    override val label: String,
+    override val parent: SymbolLookupDetails?
+) : LookupElement {
+    override val key: Any = id
+    override val icon = @Composable {
+        val iconPath = when (type) {
+            SymbolType.FUNCTION -> "/expui/nodes/function_dark.svg"
+            SymbolType.NAMESPACE -> "/expui/nodes/package_dark.svg"
+            SymbolType.GLOBAL_VAR -> "/expui/nodes/gvariable_dark.svg"
+            SymbolType.LIBRARY -> "/expui/nodes/library_dark.svg"
+            SymbolType.CLASS -> "/expui/nodes/class_dark.svg"
+            else -> "/expui/nodes/field_dark.svg"
+        }
+
+        Icon(
+            resource = iconPath,
+            iconClass = ExpUiIcons::class.java,
+            contentDescription = type.toString()
+        )
+    }
+
+    override fun fullyQualified(): String {
+        return ancestors().fold("") { value, lookupElement ->
+            "${lookupElement.label}::$value"
+        }
+    }
+}
 
 
 @GhidraSchema(
@@ -24,7 +59,10 @@ interface SymbolRecord : GhidraRecord {
     var typeOrdinal: Byte
     var type: SymbolType
         get() = SymbolType.getSymbolType(typeOrdinal.toInt())
-        set(value) { typeOrdinal = value.id }
+        set(value) {
+            typeOrdinal = value.id
+        }
+
 }
 
 class SymbolDbTable(inner: Table) : GhidraTable<SymbolRecord>(inner) {

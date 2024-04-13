@@ -6,6 +6,7 @@ detekt = "1.23.4"
 dokka = "1.8.20"
 ideaGradlePlugin = "1.17.1"
 intellij = "241.14494.241"
+fastutil = "8.5.13"
 ghidra = "11.1"
 jewel = "0.17.0"
 jna = "5.14.0"
@@ -15,6 +16,7 @@ kotlinpoet = "1.15.2"
 kotlinterGradlePlugin = "3.16.0"
 kotlinxSerialization = "1.5.1"
 kotlinxBinaryCompat = "0.14.0"
+lucene = "9.10.0"
 ksp = "1.9.20-1.0.14"
 poko = "0.13.1"
 
@@ -25,12 +27,20 @@ commonmark-ext-autolink = { module = "org.commonmark:commonmark-ext-autolink", v
 
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-extensions-jetbrains = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
+
+fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
+
 filePicker = { module = "com.darkrockstudios:mpfilepicker", version = "3.1.0" }
 
 intellij-icons = { module = "com.jetbrains.intellij.platform:icons", version.ref = "intellij" }
 intellij-util-text-matching = { module = "com.jetbrains.intellij.platform:util-text-matching", version.ref = "intellij" }
 intellij-util-base = { module = "com.jetbrains.intellij.platform:util-base", version.ref = "intellij" }
+intellij-util-ui = { module = "com.jetbrains.intellij.platform:util-ui", version.ref = "intellij" }
+
 jetbrains-compose-splitpane = { module = "org.jetbrains.compose.components:components-splitpane-desktop", version.ref = "composeDesktop" }
+
+lucene-core = { module = "org.apache.lucene:lucene-core", version.ref = "lucene" }
+
 kotlinSarif = { module = "io.github.detekt.sarif4k:sarif4k", version.ref = "kotlinSarif" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }

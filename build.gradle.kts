@@ -20,7 +20,7 @@ dependencies {
 
     implementation(libs.jewel.standalone)
     implementation(libs.jewel.decorated.window)
-
+    implementation(libs.fastutil)
     implementation(libs.jetbrains.compose.splitpane)
     implementation(compose.desktop.currentOs) {
         exclude(group = "org.jetbrains.compose.material")
@@ -28,6 +28,7 @@ dependencies {
 
     implementation(libs.intellij.util.text.matching)
     implementation(libs.intellij.util.base)
+    implementation(libs.intellij.util.ui)
     implementation(libs.intellij.icons)
 
     implementation(fileTree(ghidraDistribution) {

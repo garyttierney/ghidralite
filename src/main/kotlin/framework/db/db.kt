@@ -66,6 +66,8 @@ class GhidraRecordSpliterator<T : GhidraRecord>(
 abstract class GhidraTable<T : GhidraRecord>(val inner: Table) {
     internal abstract fun from(record: DBRecord): T
 
+    fun get(id: Long) = from(inner.getRecord(id))
+
     fun all() = StreamSupport.stream(
         GhidraRecordSpliterator(
             this,

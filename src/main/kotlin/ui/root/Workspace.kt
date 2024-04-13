@@ -18,8 +18,8 @@ import io.github.garyttierney.ghidralite.framework.search.index.IndexWriter
 import io.github.garyttierney.ghidralite.framework.search.index.Indexes
 import io.github.garyttierney.ghidralite.framework.search.index.program.ProgramChangeSnapshotStrategy
 import io.github.garyttierney.ghidralite.framework.search.index.program.ProgramChangeWatcher
-import io.github.garyttierney.ghidralite.framework.search.index.program.ProgramDbTableLoader
 import io.github.garyttierney.ghidralite.framework.search.index.program.programChangeInterest
+import io.github.garyttierney.ghidralite.framework.search.index.program.symbol.SymbolIndexLoader
 import kotlinx.coroutines.launch
 
 object SymbolSnapshotStrategy : ProgramChangeSnapshotStrategy<SymbolRecord> {
@@ -56,13 +56,10 @@ class Workspace(val project: Project, val program: Program, val searcher: Search
                 )
             )
             val symbolDbTable = SymbolDbTable(program.dbHandle.getTable("Symbols"))
-            val regex = Regex("^case|RTTI|Catch@|Unwind@|switch")
-            val symbolLoader = ProgramDbTableLoader(symbolDbTable) {
-                !it.name.matches(regex)
-            }
+            val symbolIndexLoader = SymbolIndexLoader(symbolDbTable)
             val symbolIndexWriter = IndexWriter(indexes, SymbolRecord::class)
 
-            indexes.load(symbolLoader)
+            indexes.load(symbolIndexLoader)
 
             GhidraWorkerScope.launch {
                 symbolIndexWriter.run(symbolChanges)

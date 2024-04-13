@@ -1,6 +1,5 @@
 package io.github.garyttierney.ghidralite.ui.search
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.focusable
@@ -9,7 +8,6 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -17,11 +15,13 @@ import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.garyttierney.ghidralite.framework.search.SearchResult
-import io.github.garyttierney.ghidralite.ui.internal.PreviewComponent
+import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.lazy.*
 import org.jetbrains.jewel.foundation.lazy.tree.DefaultSelectableLazyColumnKeyActions
 import org.jetbrains.jewel.foundation.lazy.tree.KeyActions
@@ -31,7 +31,6 @@ import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.theme.colorPalette
 import org.jetbrains.jewel.ui.theme.menuStyle
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun QuickSearch(
     items: List<SearchResult>,
@@ -42,7 +41,7 @@ fun QuickSearch(
     listActions: KeyActions = remember { DefaultSelectableLazyColumnKeyActions(DefaultSelectableColumnKeybindings) }
 ) {
     val itemListState = rememberSelectableLazyListState()
-    val itemKeys by derivedStateOf { items.map { SelectableLazyListKey.Selectable(it.uniqueKey) }.toList() }
+    val itemKeys by derivedStateOf { items.map { SelectableLazyListKey.Selectable(it.element.key) }.toList() }
 
     val handleListAction = { event: KeyEvent ->
         val itemListHandler = listActions.handleOnKeyEvent(event, itemKeys, itemListState, SelectionMode.Single)
@@ -87,16 +86,25 @@ fun QuickSearchResultList(
     state: SelectableLazyListState = rememberSelectableLazyListState(),
 ) {
     val listTheme = Modifier.fillMaxSize().background(JewelTheme.menuStyle.colors.background)
+    val scope = rememberCoroutineScope()
 
     Box {
         SelectableLazyColumn(
             contentPadding = PaddingValues(2.dp),
             selectionMode = SelectionMode.Single,
             state = state,
-            modifier = listTheme.focusable(),
+            modifier = listTheme.then(Modifier.focusable()),
+            onSelectedIndexesChanged = {
+                val first = it.firstOrNull()
+                first?.let {
+                    scope.launch {
+                        state.scrollToItem(it)
+                    }
+                }
+            }
         ) {
             items.forEach {
-                item(key = it.uniqueKey) {
+                item(key = it.element.key) {
                     QuickSearchResult(item = it)
                 }
             }
@@ -130,12 +138,7 @@ fun SelectableLazyItemScope.QuickSearchResult(item: SearchResult) {
         verticalAlignment = Alignment.Bottom,
         modifier = rowTheme
     ) {
-        Icon(
-            "/nodes/method.svg",
-            contentDescription = "Test",
-            iconClass = SearchResult::class.java,
-            modifier = Modifier.size(16.dp)
-        )
+        item.element.icon()
 
         val matchingRangeAnnotations = item.fragments.map { range ->
             AnnotatedString.Range(
@@ -145,23 +148,22 @@ fun SelectableLazyItemScope.QuickSearchResult(item: SearchResult) {
             )
         }
 
+        val annotatedLabel = buildAnnotatedString {
+            append(AnnotatedString(text = item.element.label, spanStyles = matchingRangeAnnotations))
+            val parent = item.element.parent
+
+            if (parent != null) {
+                append(" ")
+                pushStyle(SpanStyle(color = JewelTheme.globalColors.infoContent, fontWeight = FontWeight.Light))
+                append(parent.fullyQualified())
+            }
+        }
+
         Text(
-            AnnotatedString(text = item.name, spanStyles = matchingRangeAnnotations),
+            annotatedLabel,
             maxLines = 1,
             modifier = Modifier.weight(1f, false),
             overflow = TextOverflow.Ellipsis
         )
     }
-}
-
-@Preview
-@Composable
-internal fun QuickSearchPreview() = PreviewComponent {
-    val items = (0..10).map {
-        SearchResult(
-            "name", "subheading", "type", 1, it as Long, mutableListOf()
-        )
-    }
-
-    QuickSearch(items = items.toList(), query = "Search query", onQueryChanged = {}, onResultSelected = {})
 }
