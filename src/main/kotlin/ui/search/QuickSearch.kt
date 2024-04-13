@@ -5,12 +5,14 @@ import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.ImeOptions
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
@@ -61,6 +64,11 @@ fun QuickSearch(
         } else {
             false
         }
+    }
+
+    LaunchedEffect(query) {
+        itemListState.scrollToItem(0)
+        itemListState.lastActiveItemIndex = -1
     }
 
     Row {
@@ -110,7 +118,7 @@ fun QuickSearchInput(
 ) {
     TextField(
         query,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.None),
         undecorated = true,
         outline = Outline.None,
         onValueChange = { onQueryChanged(it) },
@@ -134,7 +142,7 @@ fun QuickSearchResultList(
             contentPadding = PaddingValues(2.dp),
             selectionMode = SelectionMode.Single,
             state = state,
-            modifier = listTheme.then(Modifier.focusable()),
+            modifier = listTheme.focusProperties { canFocus = false },
             onSelectedIndexesChanged = {
                 val first = it.firstOrNull()
                 first?.let {
@@ -151,10 +159,7 @@ fun QuickSearchResultList(
             }
         }
 
-        LaunchedEffect(items) {
-            state.scrollToItem(0)
-            state.lastActiveItemIndex = -1
-        }
+
 
         VerticalScrollbar(
             rememberScrollbarAdapter(state.lazyListState),
