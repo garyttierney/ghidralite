@@ -2,26 +2,23 @@ package io.github.garyttierney.ghidralite.ui.root
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.SwingPanel
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
-import androidx.compose.ui.unit.dp
 import io.github.garyttierney.ghidralite.framework.search.SearchResult
 import io.github.garyttierney.ghidralite.ui.search.QuickSearch
-import io.github.garyttierney.ghidralite.ui.search.QuickSearchWindow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
-import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.rememberSplitPaneState
 import org.jetbrains.jewel.foundation.theme.JewelTheme
-import org.jetbrains.jewel.ui.component.*
+import java.awt.BorderLayout
+import javax.swing.JPanel
 
 
 @OptIn(ExperimentalSplitPaneApi::class)
@@ -61,6 +58,23 @@ fun WorkspaceView(model: Workspace) = key(model) {
         QuickSearch(
             items = searchResults,
             query = searchQuery,
+            itemPreview = { item ->
+                Box(modifier = Modifier.background(Color.Red)) {
+                    SwingPanel(
+                        modifier = Modifier.fillMaxSize().background(Color.Red),
+                        factory = {
+
+                            val panel = JPanel(BorderLayout())
+                            panel.add(model.listing, BorderLayout.CENTER)
+                            panel
+                        },
+                        update = {
+                            val sym = model.program.symbolTable.getSymbol(item.element.key as Long)
+                            model.listing.goTo(sym.address)
+                        }
+                    )
+                }
+            },
             onQueryChanged = {
                 searchQuery = it
                 searchResults.clear()

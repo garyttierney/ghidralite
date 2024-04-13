@@ -8,11 +8,13 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -20,6 +22,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.MenuBar
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.rememberWindowState
+import io.github.garyttierney.ghidralite.LocalWindowPosition
 import io.github.garyttierney.ghidralite.framework.search.SearchResult
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.lazy.*
@@ -31,6 +38,7 @@ import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.ui.theme.colorPalette
 import org.jetbrains.jewel.ui.theme.menuStyle
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun QuickSearch(
     items: List<SearchResult>,
@@ -38,10 +46,12 @@ fun QuickSearch(
     onQueryChanged: (String) -> Unit,
     onResultSelected: (SearchResult) -> Unit,
     focusRequester: FocusRequester = FocusRequester(),
-    listActions: KeyActions = remember { DefaultSelectableLazyColumnKeyActions(DefaultSelectableColumnKeybindings) }
+    listActions: KeyActions = remember { DefaultSelectableLazyColumnKeyActions(DefaultSelectableColumnKeybindings) },
+    itemPreview: @Composable (SearchResult) -> Unit = {}
 ) {
     val itemListState = rememberSelectableLazyListState()
     val itemKeys by derivedStateOf { items.map { SelectableLazyListKey.Selectable(it.element.key) }.toList() }
+    val itemSelected by derivedStateOf { items.find { it.element.key == itemListState.selectedKeys.firstOrNull() } }
 
     val handleListAction = { event: KeyEvent ->
         val itemListHandler = listActions.handleOnKeyEvent(event, itemKeys, itemListState, SelectionMode.Single)
@@ -53,14 +63,44 @@ fun QuickSearch(
         }
     }
 
-    Column(modifier = Modifier.onPreviewKeyEvent(handleListAction).focusRequester(focusRequester).focusGroup()) {
-        QuickSearchInput(query = query, onQueryChanged = onQueryChanged)
+    Row {
+        Column(modifier = Modifier.onPreviewKeyEvent(handleListAction).focusRequester(focusRequester).focusGroup()) {
+            QuickSearchInput(query = query, onQueryChanged = onQueryChanged)
 
-        QuickSearchResultList(
-            items = items,
-            state = itemListState,
-            onItemSelected = onResultSelected,
-        )
+            QuickSearchResultList(
+                items = items,
+                itemPreview = itemPreview,
+                state = itemListState,
+                onItemSelected = onResultSelected,
+            )
+        }
+
+        itemSelected?.let {
+            val containerSize = LocalWindowInfo.current.containerSize
+            val containerPos = LocalWindowPosition.current
+            val popupOffset = containerSize.width + 10
+            val popupPos = WindowPosition.Absolute(containerPos.x + popupOffset.dp, containerPos.y)
+            val popupState = rememberWindowState(
+                position = popupPos,
+                width = containerSize.width.dp,
+                height = containerSize.height.dp
+            )
+
+            Window(
+                visible = true,
+                onCloseRequest = {},
+                state = popupState,
+                undecorated = true,
+                alwaysOnTop = true,
+                focusable = false,
+            ) {
+                // TODO HACK: A window with a single SwingPanel it doesn't render without the presence of another heavyweight
+                // component.
+                MenuBar {}
+
+                itemPreview(it)
+            }
+        }
     }
 }
 
@@ -84,6 +124,7 @@ fun QuickSearchResultList(
     items: List<SearchResult>,
     onItemSelected: (SearchResult) -> Unit,
     state: SelectableLazyListState = rememberSelectableLazyListState(),
+    itemPreview: @Composable (SearchResult) -> Unit,
 ) {
     val listTheme = Modifier.fillMaxSize().background(JewelTheme.menuStyle.colors.background)
     val scope = rememberCoroutineScope()
