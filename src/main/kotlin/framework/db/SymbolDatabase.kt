@@ -25,7 +25,7 @@ data class SymbolLookupDetails(
             SymbolType.GLOBAL_VAR -> "/expui/nodes/gvariable_dark.svg"
             SymbolType.LIBRARY -> "/expui/nodes/library_dark.svg"
             SymbolType.CLASS -> "/expui/nodes/class_dark.svg"
-            else -> "/expui/nodes/field_dark.svg"
+            else -> "/expui/nodes/static_dark.svg"
         }
 
         Icon(
@@ -35,11 +35,10 @@ data class SymbolLookupDetails(
         )
     }
 
-    override fun fullyQualified(): String {
-        return ancestors().fold("") { value, lookupElement ->
-            "${lookupElement.label}::$value"
+    override val namespace: String
+        get() {
+            return ancestors().map { it.label }.toList().reversed().joinToString("::")
         }
-    }
 }
 
 

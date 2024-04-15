@@ -63,7 +63,6 @@ fun WorkspaceView(model: Workspace) = key(model) {
                     SwingPanel(
                         modifier = Modifier.fillMaxSize().background(Color.Red),
                         factory = {
-
                             val panel = JPanel(BorderLayout())
                             panel.add(model.listing, BorderLayout.CENTER)
                             panel

@@ -56,12 +56,9 @@ fun QuickSearch(
 
     val handleListAction = { event: KeyEvent ->
         val itemListHandler = listActions.handleOnKeyEvent(event, itemKeys, itemListState, SelectionMode.Single)
+        val handled = event.itemListHandler()
 
-        if (event.itemListHandler()) {
-            true
-        } else {
-            false
-        }
+        handled
     }
 
     Row {
@@ -77,7 +74,6 @@ fun QuickSearch(
 
             QuickSearchResultList(
                 items = items,
-                itemPreview = itemPreview,
                 state = itemListState,
                 onItemSelected = onResultSelected,
             )
@@ -102,7 +98,7 @@ fun QuickSearch(
                 alwaysOnTop = true,
                 focusable = false,
             ) {
-                // TODO HACK: A window with a single SwingPanel it doesn't render without the presence of another heavyweight
+                // TODO HACK: A window with a single SwingPanel in it doesn't render without the presence of another heavyweight
                 // component.
                 MenuBar {}
 
@@ -132,7 +128,6 @@ fun QuickSearchResultList(
     items: List<SearchResult>,
     onItemSelected: (SearchResult) -> Unit,
     state: SelectableLazyListState = rememberSelectableLazyListState(),
-    itemPreview: @Composable (SearchResult) -> Unit,
 ) {
     val listTheme = Modifier.fillMaxSize().background(JewelTheme.menuStyle.colors.background)
     val scope = rememberCoroutineScope()
@@ -194,12 +189,12 @@ fun SelectableLazyItemScope.QuickSearchResult(item: SearchResult) {
 
         val annotatedLabel = buildAnnotatedString {
             append(AnnotatedString(text = item.element.label, spanStyles = matchingRangeAnnotations))
-            val parent = item.element.parent
+            val namespace = item.element.namespace
 
-            if (parent != null) {
+            if (namespace.isNotBlank()) {
                 append(" ")
                 pushStyle(SpanStyle(color = JewelTheme.globalColors.infoContent, fontWeight = FontWeight.Light))
-                append(parent.fullyQualified())
+                append(namespace)
             }
         }
 

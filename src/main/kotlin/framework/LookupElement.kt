@@ -16,5 +16,12 @@ interface LookupElement {
         }
     }
 
-    fun fullyQualified() = label
+    val namespace: String
+    val fullyQualifiedName: String
+        get() = if (namespace.isEmpty()) {
+            label
+        } else {
+            "$namespace::$label"
+        }
+
 }

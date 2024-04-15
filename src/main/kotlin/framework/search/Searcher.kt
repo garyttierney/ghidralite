@@ -7,6 +7,7 @@ import io.github.garyttierney.ghidralite.framework.db.SymbolLookupDetails
 import io.github.garyttierney.ghidralite.framework.search.index.Indexes
 import java.util.concurrent.PriorityBlockingQueue
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.max
 
 class Searcher(private val indexes: Indexes) {
     suspend fun query(query: String, onDataAvailable: (List<SearchResult>) -> Unit) {
@@ -14,30 +15,49 @@ class Searcher(private val indexes: Indexes) {
         val emissions = AtomicInteger(0)
 
         val queueCapacity = 50
-        val matcher = NameUtil.buildMatcher(query)
+        val label = query.substringAfterLast("::")
+        val parent = query.substringBeforeLast("::", missingDelimiterValue = "")
+
+        val parentMatcher = NameUtil.buildMatcher(parent)
             .withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE)
-            .withSeparators(".:_")
+            .withSeparators("_")
+            .preferringStartMatches()
             .typoTolerant()
-            .allOccurrences()
+            .build()
+
+        val labelMatcher = NameUtil.buildMatcher(label)
+            .withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE)
+            .withSeparators("_")
+            .typoTolerant()
             .build()
 
         indexes.query<SymbolLookupDetails>().collect {
-            val matchingDegree = matcher.matchingDegree(it.label, false)
-            val result = when {
-                matchingDegree < 1 -> return@collect
-                else -> SearchResult(
-                    it,
-                    matchingDegree,
-                    mutableListOf()
-                )
+            val parentScore = if (parent.isNotEmpty()) {
+                val score = it.parent?.let { parent -> parentMatcher.matchingDegree(parent.label, false) }
+                score ?: 0
+            } else {
+                1
             }
 
-            val beatsWorst = priorityQueue.size == queueCapacity && priorityQueue.peek().score < result.score
+            val labelScore = if (label.isNotEmpty()) {
+                labelMatcher.matchingDegree(it.label, false)
+            } else {
+                1
+            }
+
+            val score = labelScore + parentScore
+
+            if (score < 2) {
+                return@collect
+            }
+
+            val beatsWorst = priorityQueue.size == queueCapacity && priorityQueue.peek().score < score
             val adding = beatsWorst || priorityQueue.size < queueCapacity
 
             if (adding) {
-                val fragments = matcher.matchingFragments(it.label)
-                result.fragments.addAll(fragments)
+                val fragments = labelMatcher.matchingFragments(it.label) ?: mutableListOf()
+                val result = SearchResult(it, score, fragments)
+
                 priorityQueue.add(result)
 
                 if (emissions.incrementAndGet() >= 50) {
