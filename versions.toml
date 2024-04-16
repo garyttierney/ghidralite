@@ -10,14 +10,14 @@ fastutil = "8.5.13"
 ghidra = "11.1"
 jewel = "0.17.0"
 jna = "5.14.0"
-kotlin = "1.9.0"
+kotlin = "1.9.23"
 kotlinSarif = "0.5.0"
 kotlinpoet = "1.15.2"
 kotlinterGradlePlugin = "3.16.0"
-kotlinxSerialization = "1.5.1"
 kotlinxBinaryCompat = "0.14.0"
+kotlinxCoroutines = "1.8.0"
 lucene = "9.10.0"
-ksp = "1.9.20-1.0.14"
+ksp = "1.9.23-1.0.20"
 poko = "0.13.1"
 
 [libraries]
@@ -43,7 +43,7 @@ lucene-core = { module = "org.apache.lucene:lucene-core", version.ref = "lucene"
 
 kotlinSarif = { module = "io.github.detekt.sarif4k:sarif4k", version.ref = "kotlinSarif" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines"}
 
 ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 

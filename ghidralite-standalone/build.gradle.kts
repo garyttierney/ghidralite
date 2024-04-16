@@ -11,6 +11,8 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation(kotlin("stdlib-jdk8"))
+    implementation(libs.kotlinx.coroutines)
 }
 
 tasks.test {

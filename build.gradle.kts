@@ -4,7 +4,6 @@
 plugins {
     `ghidralite-conventions`
     alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.composeDesktop)
 }
 
@@ -12,11 +11,12 @@ val ghidraDistribution = extra["ghidra.dir"] as String
 
 dependencies {
     implementation(project(":ghidralite-core-ksp"))
+    compileOnly(enforcedPlatform("ghidra:ghidra"))
+    compileOnly("ghidra:Base")
+
     ksp(project(":ghidralite-core-ksp"))
 
     implementation(libs.kotlin.reflect)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.filePicker)
 
     implementation(libs.jewel.standalone)
     implementation(libs.jewel.decorated.window)
@@ -31,7 +31,7 @@ dependencies {
     implementation(libs.intellij.util.ui)
     implementation(libs.intellij.icons)
 
-    implementation(fileTree(ghidraDistribution) {
+    runtimeOnly(fileTree(ghidraDistribution) {
         include("**/*.jar")
     })
 }

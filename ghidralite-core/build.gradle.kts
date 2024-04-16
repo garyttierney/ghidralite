@@ -1,22 +1,20 @@
 plugins {
     `ghidralite-conventions`
+    alias(libs.plugins.ksp)
     id("me.champeau.jmh") version "0.7.2"
 }
 
-group = "io.github.garyttierney"
-version = "unspecified"
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
-    testImplementation(kotlin("test"))
-}
+    implementation(projects.ghidraliteCoreKsp)
+    ksp(projects.ghidraliteCoreKsp)
 
-tasks.test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(17)
+    implementation(libs.kotlinx.coroutines)
+    api(libs.intellij.util.base)
+    api(libs.intellij.util.text.matching)
+    implementation(libs.fastutil)
+
+    compileOnly(platform("ghidra:ghidra"))
+    compileOnly("ghidra:DB")
+    compileOnly("ghidra:SoftwareModeling")
 }
