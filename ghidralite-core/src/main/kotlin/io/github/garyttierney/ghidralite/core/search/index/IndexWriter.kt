@@ -25,7 +25,7 @@ class IndexWriter<T : Any>(private val indexes: Indexes, private val type: KClas
 
             val batchTimeout = 2.seconds.toJavaDuration()
 
-            while (batch.size >= BATCH_SIZE || Duration.between(lastWrite, Instant.now()) > batchTimeout) {
+            while (batch.size < BATCH_SIZE || Duration.between(lastWrite, Instant.now()) < batchTimeout) {
                 val item = withTimeoutOrNull(2.seconds) { channel.receive() }
                 if (item != null) {
                     batch.add(item.value)

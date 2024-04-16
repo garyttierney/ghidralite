@@ -8,8 +8,6 @@ import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.scan
 import java.util.*
-import java.util.concurrent.PriorityBlockingQueue
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.time.Duration.Companion.milliseconds
 
 class Searcher(private val indexes: Indexes) {
