@@ -6,9 +6,8 @@ plugins {
 dependencies {
     api(projects.ghidraliteCore)
 
-    api(compose.desktop.currentOs) {
-        exclude(group = "org.jetbrains.compose.material")
-    }
+    api(compose.desktop.windows_x64)
+    api(compose.desktop.linux_x64)
 
     implementation(libs.jewel.standalone)
     implementation(libs.jewel.decorated.window)
