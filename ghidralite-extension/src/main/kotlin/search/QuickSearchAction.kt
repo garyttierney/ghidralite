@@ -21,7 +21,10 @@ import ghidra.app.util.viewer.listingpanel.ListingPanel
 import ghidra.program.model.listing.Function
 import ghidra.program.model.symbol.SymbolType
 import io.github.garyttierney.ghidralite.core.search.SearchResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.intui.standalone.Inter
 import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
@@ -44,7 +47,11 @@ import kotlin.time.Duration.Companion.milliseconds
 import androidx.compose.ui.input.key.KeyEvent as ComposeKeyEvent
 
 
-class QuickSearchAction(private val quickSearchService: QuickSearchService, private val previewListing: ListingPanel, private val goToService: GoToService) :
+class QuickSearchAction(
+    private val quickSearchService: QuickSearchService,
+    private val previewListing: ListingPanel,
+    private val goToService: GoToService
+) :
     ProgramContextAction("Open Quick Search", "ghidralite-search") {
     init {
         keyBindingData = KeyBindingData(KeyEvent.VK_N, CTRL_DOWN_MASK or SHIFT_DOWN_MASK)
@@ -82,7 +89,9 @@ class QuickSearchAction(private val quickSearchService: QuickSearchService, priv
         composePanel.setContent {
             var wasFocused by remember { mutableStateOf(false) }
             var searchQuery by remember { mutableStateOf("") }
+            var searchJob by remember { mutableStateOf<Job?>(null) }
             val searchResults = remember { mutableStateListOf<SearchResult>() }
+            val scope = rememberCoroutineScope()
 
             fun closeWindow() {
                 window.isVisible = false
@@ -149,11 +158,13 @@ class QuickSearchAction(private val quickSearchService: QuickSearchService, priv
                     },
                     onQueryChanged = {
                         searchQuery = it
-
-                        quickSearchService.search(it, onResultAvailable = { results ->
-                            searchResults.clear()
-                            searchResults.addAll(results)
-                        })
+                        searchJob?.cancel()
+                        searchJob = scope.launch(Dispatchers.IO) {
+                            quickSearchService.search(it, onResultAvailable = { results ->
+                                searchResults.clear()
+                                searchResults.addAll(results)
+                            })
+                        }
                     },
                     onResultSelected = {}
                 )

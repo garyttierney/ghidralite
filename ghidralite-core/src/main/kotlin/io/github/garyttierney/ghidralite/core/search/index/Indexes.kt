@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.toCollection
+import java.util.stream.Stream
 import kotlin.reflect.KClass
 
 /**
@@ -23,8 +24,10 @@ class Indexes {
         indexData(ty).addAll(values)
     }
 
-    fun <T : Any> query(ty: KClass<T>): Flow<T> = indexData(ty).asFlow()
+    fun <T : Any> stream(ty: KClass<T>): Stream<T> = indexData(ty).parallelStream()
+    inline fun <reified T : Any> stream(): Stream<T> = stream(T::class)
 
+    fun <T : Any> query(ty: KClass<T>): Flow<T> = indexData(ty).asFlow()
     inline fun <reified T : Any> query(): Flow<T> = query(T::class)
 
     suspend fun <T : Any> load(ty: KClass<T>, bulkLoader: IndexBulkLoader<T>) {

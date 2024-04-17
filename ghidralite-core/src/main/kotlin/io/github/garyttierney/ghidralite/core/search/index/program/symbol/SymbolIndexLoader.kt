@@ -26,13 +26,11 @@ class SymbolIndexLoader(private val table: SymbolDbTable) : IndexBulkLoader<Symb
             )
         }
 
-        return table.all().consumeAsFlow()
+        return table.all()
+            .consumeAsFlow()
             .filterNot {
-                it.type == SymbolType.NAMESPACE || it.type == SymbolType.CLASS || it.name.isBlank() || it.name.startsWith(
-                    "Unwind"
-                ) || it.name.startsWith(
-                    "Catch"
-                )
+                it.type == SymbolType.NAMESPACE || it.type == SymbolType.CLASS || it.name.isBlank()
+                        || it.name.startsWith("Unwind") || it.name.startsWith("Catch")
             }
             .map(::recordToLookup)
     }

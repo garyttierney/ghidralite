@@ -1,6 +1,11 @@
 package internal
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.*
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.intui.standalone.Inter
@@ -25,6 +30,8 @@ internal fun PreviewComponent(content: @Composable() () -> Unit) {
         ),
         swingCompatMode = true,
     ) {
-        content()
+        Box(modifier = Modifier.background(themeDefinition.globalColors.paneBackground).fillMaxSize()) {
+            content()
+        }
     }
 }

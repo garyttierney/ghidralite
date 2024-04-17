@@ -4,9 +4,8 @@ import com.intellij.psi.codeStyle.NameUtil
 import io.github.garyttierney.ghidralite.core.db.SymbolLookupDetails
 import io.github.garyttierney.ghidralite.core.search.index.Indexes
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.*
 import java.util.*
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -14,63 +13,43 @@ class Searcher(private val indexes: Indexes) {
     @OptIn(FlowPreview::class)
     suspend fun query(query: String, onDataAvailable: (List<SearchResult>) -> Unit) {
         val queueCapacity = 50
-        val label = query.substringAfterLast("::")
-        val parent = query.substringBeforeLast("::", missingDelimiterValue = "")
+        val isFqnQuery = query.contains("::")
+        val pattern = if (isFqnQuery) "*$query" else query
 
-        val parentMatcher = NameUtil.buildMatcher(parent)
+        val labelMatcher = NameUtil.buildMatcher(pattern)
             .withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE)
             .withSeparators("_")
             .preferringStartMatches()
             .typoTolerant()
             .build()
 
-        val labelMatcher = NameUtil.buildMatcher(label)
-            .withCaseSensitivity(NameUtil.MatchingCaseSensitivity.NONE)
-            .withSeparators("_")
-            .typoTolerant()
-            .build()
+        val resultFlow = channelFlow {
+            indexes.stream<SymbolLookupDetails>().forEach {
+                val label = if (isFqnQuery) it.fullyQualifiedName else it.label
+                val score = labelMatcher.matchingDegree(label, false)
 
-        indexes.query<SymbolLookupDetails>()
-            .scan(PriorityQueue(naturalOrder<SearchResult>().reversed())) { queue, item ->
-                val parentScore = if (parent.isNotEmpty()) {
-                    val score = item.parent?.let { parent -> parentMatcher.matchingDegree(parent.label, false) }
-                    score ?: 0
-                } else {
-                    1
+                if (score > 0) {
+                    trySendBlocking(SearchResult(it, score, emptyList()))
                 }
+            }
+        }
 
-                val labelScore = if (label.isNotEmpty()) {
-                    labelMatcher.matchingDegree(item.label, false)
-                } else {
-                    1
-                }
-
-                val score = labelScore + parentScore
-
-                if (score < 2) {
-                    return@scan queue
-                }
-
-                val beatsWorst = queue.size == queueCapacity && queue.peek().score < score
-                val adding = beatsWorst || queue.size < queueCapacity
+        resultFlow
+            .scan(PriorityQueue(naturalOrder<SearchResult>())) { queue, item ->
+                val newQueue = PriorityQueue(queue)
+                val beatsWorst = newQueue.size == queueCapacity && newQueue.peek().score < item.score
+                val adding = beatsWorst || newQueue.size < queueCapacity
 
                 if (adding) {
-                    val fragments = labelMatcher.matchingFragments(item.label) ?: mutableListOf()
-                    val result = SearchResult(
-                        item,
-                        score,
-                        fragments.map { it.startOffset.rangeTo(it.startOffset + it.length) }
-                    )
-
-                    queue.add(result)
+                    newQueue.add(item)
                 }
 
-                queue
+                newQueue
             }
-            .debounce(100.milliseconds)
             .conflate()
-            .collect {
-                onDataAvailable(it.toList())
+            .debounce(100.milliseconds)
+            .collectLatest {
+                onDataAvailable(it.sortedDescending())
             }
     }
 }

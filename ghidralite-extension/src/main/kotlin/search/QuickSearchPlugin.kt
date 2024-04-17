@@ -93,9 +93,6 @@ class QuickSearchPlugin(tool: PluginTool) : ProgramPlugin(tool), QuickSearchServ
         })
     }
 
-    override fun search(query: String, onResultAvailable: (List<SearchResult>) -> Unit) {
-        coroutineScope.launch {
-            searcher.query(query, onResultAvailable)
-        }
-    }
+    override suspend fun search(query: String, onResultAvailable: (List<SearchResult>) -> Unit) =
+        searcher.query(query, onResultAvailable)
 }
