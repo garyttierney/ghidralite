@@ -14,6 +14,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(kotlin("stdlib-jdk8"))
     implementation(libs.kotlinx.coroutines)
+    implementation(libs.bundles.ghidra.all.modules)
 }
 
 tasks.test {

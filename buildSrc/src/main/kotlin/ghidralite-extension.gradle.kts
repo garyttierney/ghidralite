@@ -5,7 +5,7 @@ plugins {
     `java-library`
 }
 
-val distSources = sourceSets.create("distribution") {
+val distSources: SourceSet = sourceSets.create("distribution") {
     resources {
         srcDirs("src/main/dist")
     }

@@ -5,7 +5,7 @@ composeDesktop = "1.6.10-dev1561"
 decompose = "2.2.2"
 detekt = "1.23.4"
 dokka = "1.8.20"
-ideaGradlePlugin = "1.17.1"
+ideaGradlePlugin = "1.1.8"
 intellij = "241.14494.241"
 fastutil = "8.5.13"
 ghidra = "11.1"
@@ -63,6 +63,7 @@ ghidra-software-modeling = { module = "ghidra:SoftwareModeling", version.ref = "
 detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+idea-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "ideaGradlePlugin" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 kotlinter-gradlePlugin = { module = "org.jmailen.gradle:kotlinter-gradle", version.ref = "kotlinterGradlePlugin" }
 kotlinx-binaryCompatValidator-gradlePlugin = { module = "org.jetbrains.kotlinx:binary-compatibility-validator", version.ref = "kotlinxBinaryCompat" }
@@ -76,7 +77,7 @@ changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
 composeDesktop = { id = "org.jetbrains.compose", version.ref = "composeDesktop" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-ideaGradlePlugin = { id = "org.jetbrains.intellij", version.ref = "ideaGradlePlugin" }
+ideaGradlePlugin = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "ideaGradlePlugin" }
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-binaryCompatValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinxBinaryCompat" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
