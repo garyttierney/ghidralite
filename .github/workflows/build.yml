@@ -120,7 +120,7 @@ jobs:
       - uses: google-github-actions/release-please-action@v4
         id: release-please
         with:
-          config-file: .github/release-please-config.json
+          config-file: release-please-config.json
           release-type: simple
 
       - name: "Download Github Artifacts"
