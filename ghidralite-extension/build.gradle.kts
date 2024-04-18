@@ -1,5 +1,5 @@
 plugins {
-    `ghidralite-conventions`
+    `ghidralite-kotlin-conventions`
     `ghidralite-extension`
     alias(libs.plugins.composeDesktop)
 }

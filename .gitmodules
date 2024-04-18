@@ -1,0 +1,4 @@
+[submodule "ghidra"]
+	path = ghidra
+	url = git@github.com:garyttierney/ghidra.git
+	branch = gradle-metadata

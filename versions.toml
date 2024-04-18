@@ -1,4 +1,5 @@
 [versions]
+changelog = "2.2.0"
 commonmark = "0.22.0"
 composeDesktop = "1.6.10-dev1561"
 decompose = "2.2.2"
@@ -18,6 +19,7 @@ kotlinxBinaryCompat = "0.14.0"
 kotlinxCoroutines = "1.8.0"
 lucene = "9.10.0"
 ksp = "1.9.23-1.0.20"
+qodana = "2023.3.1"
 poko = "0.13.1"
 
 [libraries]
@@ -70,6 +72,7 @@ poko-gradlePlugin = { module = "dev.drewhamilton.poko:poko-gradle-plugin", versi
 ghidra-all-modules = ["ghidra-base", "ghidra-project", "ghidra-software-modeling"]
 
 [plugins]
+changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
 composeDesktop = { id = "org.jetbrains.compose", version.ref = "composeDesktop" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
@@ -79,4 +82,4 @@ kotlinx-binaryCompatValidator = { id = "org.jetbrains.kotlinx.binary-compatibili
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinterGradlePlugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-poko = { id = "dev.drewhamilton.poko", version.ref = "poko" }
+qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }

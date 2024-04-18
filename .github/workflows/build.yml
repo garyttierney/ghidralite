@@ -1,0 +1,114 @@
+name: Build
+on:
+  push:
+    branches:
+      - "main"
+      - "release/*"
+  pull_request:
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  # Prepare environment and build the plugin
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.properties.outputs.version }}
+      changelog: ${{ steps.properties.outputs.changelog }}
+    steps:
+
+      # Check out current repository
+      - name: Fetch Sources
+        uses: actions/checkout@v4
+
+      # Validate wrapper
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v2
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-home-cache-cleanup: true
+
+      # Build plugin
+      - name: Build plugin
+        run: ./gradlew assembleDist
+
+#      # Store already-built plugin as an artifact for downloading
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: ${{ steps.artifact.outputs.filename }}
+#          path: ./build/distributions/content/*/*
+
+  # Run tests and upload a code coverage report
+#  test:
+#    name: Test
+#    needs: [ build ]
+#    runs-on: ubuntu-latest
+#    steps:
+#
+#      # Check out current repository
+#      - name: Fetch Sources
+#        uses: actions/checkout@v4
+#
+#      # Setup Gradle
+#      - name: Setup Gradle
+#        uses: gradle/actions/setup-gradle@v3
+#        with:
+#          gradle-home-cache-cleanup: true
+#
+#      # Run tests
+#      - name: Run Tests
+#        run: ./gradlew check
+#
+#      # Collect Tests Result of failed tests
+#      - name: Collect Tests Result
+#        if: ${{ failure() }}
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: tests-result
+#          path: ${{ github.workspace }}/build/reports/tests
+#
+#      # Upload the Kover report to CodeCov
+#      - name: Upload Code Coverage Report
+#        uses: codecov/codecov-action@v4
+#        with:
+#          files: ${{ github.workspace }}/build/reports/kover/report.xml
+
+  # Run Qodana inspections and provide report
+  inspectCode:
+    name: Inspect code
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      checks: write
+      pull-requests: write
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v4
+
+      - name: Qodana - Code Inspection
+        uses: JetBrains/qodana-action@v2023.3.1
+        with:
+          cache-default-branch-only: true
+
+  release:
+    name: Release draft
+    if: github.event_name != 'pull_request'
+    needs: [ build, test, inspectCode, verify ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v4
+
+      - uses: google-github-actions/release-please-action@v4
+        with:
+          config-file: .github/release-please-config.json

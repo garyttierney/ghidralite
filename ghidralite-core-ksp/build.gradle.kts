@@ -1,5 +1,5 @@
 plugins {
-    `ghidralite-conventions`
+    `ghidralite-kotlin-conventions`
 }
 
 group = "io.github.garyttierney"
