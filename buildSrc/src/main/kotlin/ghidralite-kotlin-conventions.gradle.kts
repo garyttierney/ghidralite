@@ -31,14 +31,15 @@ idea {
 
 tasks {
     detektMain {
+        // Failures are reported in GitHub
+        ignoreFailures = true
+
         reports {
             sarif {
                 required = true
                 outputLocation = sarifReport
             }
-
         }
-
     }
 }
 
