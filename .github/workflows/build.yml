@@ -16,6 +16,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     permissions:
+      contents: write
       security-events: write
     steps:
       - name: Fetch Sources
