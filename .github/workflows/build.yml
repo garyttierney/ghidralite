@@ -15,12 +15,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.properties.outputs.version }}
-      changelog: ${{ steps.properties.outputs.changelog }}
     steps:
-
-      # Check out current repository
       - name: Fetch Sources
         uses: actions/checkout@v4
 
@@ -34,9 +29,39 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
+      - name: Export Ghidra Properties
+        id: ghidra-properties
+        run: |
+          GHIDRA_REF=$(git rev-parse HEAD)
+          echo "ghidra-ref=$GHIDRA_REF" >> $GITHUB_OUTPUT
+        working-directory: ghidra
+
+      - name: Cache Ghidra Distribution
+        id: cache-ghidra
+        uses: actions/cache@v4
+        with:
+          path: ghidra/build
+          key: "${{ runner.os }}-ghidra-${{ steps.ghidra-properties.outputs.ghidra-ref }}"
+
+      - name: Build Ghidra Distribution
+        if: steps.cache-ghidra.outputs.cache-hit != 'true'
+        run: |
+          gradle -I gradle/support/fetchDependencies.gradle init
+          gradle assembleAll -x sleighCompile -x ip
+        working-directory: ghidra
+
       # Build plugin
       - name: Build plugin
+        env:
+          GHIDRA_DIR: ghidra/build/dist/ghidra_11.0.3_DEV
         run: ./gradlew assembleDist
+
+      - name: Qodana - Code Inspection
+        uses: JetBrains/qodana-action@v2023.3.1
+        env:
+          GHIDRA_DIR: ghidra/build/dist/ghidra_11.0.3_DEV
+        with:
+          cache-default-branch-only: true
 
 #      # Store already-built plugin as an artifact for downloading
 #      - name: Upload artifact
@@ -80,28 +105,10 @@ jobs:
 #        with:
 #          files: ${{ github.workspace }}/build/reports/kover/report.xml
 
-  # Run Qodana inspections and provide report
-  inspectCode:
-    name: Inspect code
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      checks: write
-      pull-requests: write
-    steps:
-      - name: Fetch Sources
-        uses: actions/checkout@v4
-
-      - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2023.3.1
-        with:
-          cache-default-branch-only: true
-
   release:
     name: Release draft
     if: github.event_name != 'pull_request'
-    needs: [ build, inspectCode, verify ]
+    needs: [ build ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
