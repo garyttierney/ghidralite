@@ -46,9 +46,9 @@ jobs:
           echo "ghidra-ref=$GHIDRA_REF" >> $GITHUB_OUTPUT
         working-directory: ghidra
 
-      - name: Cache Ghidra Distribution
+      - name: Restore Ghidra Distribution cache
         id: cache-ghidra
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ghidra/build
           key: "${{ runner.os }}-ghidra-${{ steps.ghidra-properties.outputs.ghidra-ref }}"
@@ -59,6 +59,12 @@ jobs:
           gradle -I gradle/support/fetchDependencies.gradle init
           gradle assembleAll -x sleighCompile -x ip
         working-directory: ghidra
+
+      - name: Save Ghidra Distribution cache
+        uses: actions/cache/save@v4
+        with:
+          path: ghidra/build
+          key: ${{ steps.cache-ghidra.outputs.cache-primary-key }}
 
       # Build plugin
       - name: Build plugin
