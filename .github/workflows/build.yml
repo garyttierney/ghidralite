@@ -15,6 +15,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v4
@@ -38,6 +40,7 @@ jobs:
           build-scan-publish: true
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
           build-scan-terms-of-use-agree: "yes"
+          dependency-graph: generate-and-submit
 
       - name: Restore Ghidra Dependency cache
         id: cache-ghidra
@@ -70,39 +73,6 @@ jobs:
           name: artifacts-ghidralite-extension
           path: ghidralite-extension/build/dist/*.zip
 
-  test:
-    name: Test
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      contents: write
-      id-token: write
-    steps:
-      - name: Fetch Sources
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      # Set up Java environment for the next steps
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: zulu
-          java-version: 17
-
-      # Setup Gradle
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-home-cache-cleanup: true
-
-      - name: Restore Ghidra Dependency cache
-        uses: actions/cache/restore@v4
-        with:
-          path: ghidra/dependencies
-          key: "${{ runner.os }}-ghidra-dependencies-${{ hashFiles('**/fetchDependencies.gradle') }}"
-
       # Run tests
       - name: Run Tests
         run: ./gradlew check
@@ -119,7 +89,7 @@ jobs:
         if: success() || failure()
         with:
           files: ${{ github.workspace }}/build/reports/kover/report.xml
-          use_oidc: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   release:
     name: Release draft
