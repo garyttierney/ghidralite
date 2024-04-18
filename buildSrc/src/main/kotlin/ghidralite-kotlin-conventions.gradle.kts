@@ -29,11 +29,14 @@ idea {
     }
 }
 
+detekt {
+    // Failures are reported in GitHub
+    ignoreFailures = true
+}
+
+
 tasks {
     detektMain {
-        // Failures are reported in GitHub
-        ignoreFailures = true
-
         reports {
             sarif {
                 required = true
