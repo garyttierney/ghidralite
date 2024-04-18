@@ -39,44 +39,29 @@ jobs:
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
           build-scan-terms-of-use-agree: "yes"
 
-      - name: Export Ghidra Properties
-        id: ghidra-properties
-        run: |
-          GHIDRA_REF=$(git rev-parse HEAD)
-          echo "ghidra-ref=$GHIDRA_REF" >> $GITHUB_OUTPUT
-        working-directory: ghidra
-
-      - name: Restore Ghidra Distribution cache
+      - name: Restore Ghidra Dependency cache
         id: cache-ghidra
         uses: actions/cache/restore@v4
         with:
-          path: ghidra/build
-          key: "${{ runner.os }}-ghidra-${{ steps.ghidra-properties.outputs.ghidra-ref }}"
+          path: ghidra/dependencies
+          key: "${{ runner.os }}-ghidra-dependencies-${{ hashFiles('**/fetchDependencies.gradle') }}"
 
-      - name: Build Ghidra Distribution
+      - name: Fetch Ghidra Dependencies
         if: steps.cache-ghidra.outputs.cache-hit != 'true'
         run: |
-          gradle -I gradle/support/fetchDependencies.gradle init
-          gradle assembleAll -x sleighCompile -x ip
+          ./gradlew -I gradle/support/fetchDependencies.gradle init
         working-directory: ghidra
 
-      - name: Save Ghidra Distribution cache
+      - name: Save Ghidra Dependency cache
         uses: actions/cache/save@v4
         with:
-          path: ghidra/build
+          path: ghidra/dependencies
           key: ${{ steps.cache-ghidra.outputs.cache-primary-key }}
         if: steps.cache-ghidra.outputs.cache-hit != 'true'
 
       # Build plugin
       - name: Build plugin
-        env:
-          GHIDRA_DIR: ghidra/build/dist/ghidra_11.0.3_DEV
-        run: ./gradlew assembleDist -Dorg.gradle.project.ghidra.dir=`pwd`/ghidra/build/dist/ghidra_11.0.3_DEV
-
-      - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2023.3.1
-        with:
-          cache-default-branch-only: true
+        run: ./gradlew assembleDist
 
 #      # Store already-built plugin as an artifact for downloading
 #      - name: Upload artifact

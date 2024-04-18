@@ -19,12 +19,6 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
-val ghidraDir = providers.gradleProperty("ghidra.dir")
-    .getOrElse(rootDir.resolve("ghidra/build/dist/ghidra_11.0.3_DEV").absolutePath)
-
-// TODO: is this the best way to do this?
-System.setProperty("ghidra.dir", ghidraDir)
-
 dependencyResolutionManagement {
     repositories {
         google()
