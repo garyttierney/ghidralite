@@ -34,6 +34,13 @@ detekt {
     ignoreFailures = true
 }
 
+koverReport {
+    defaults {
+        xml {
+            onCheck = true
+        }
+    }
+}
 
 tasks {
     detektMain {

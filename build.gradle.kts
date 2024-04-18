@@ -19,7 +19,16 @@ idea {
     }
 }
 
+
 val reports = configurations.register("reports") { isCanBeDeclared = true }
+
+koverReport {
+    defaults {
+        xml {
+            onCheck = true
+        }
+    }
+
 
 configurations {
     kover.extendsFrom(reports)
