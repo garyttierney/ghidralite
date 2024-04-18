@@ -15,6 +15,8 @@ kotlin {
 dependencies {
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.idea.gradlePlugin)
+    implementation(libs.kover.gradlePlugin)
+    implementation(libs.detekt.gradlePlugin)
 
     // Enables using type-safe accessors to reference plugins from the [plugins] block defined in
     // version catalogs.

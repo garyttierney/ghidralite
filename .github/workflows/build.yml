@@ -70,40 +70,51 @@ jobs:
           name: artifacts-ghidralite-extension
           path: ghidralite-extension/build/dist/*.zip
 
-  # Run tests and upload a code coverage report
-#  test:
-#    name: Test
-#    needs: [ build ]
-#    runs-on: ubuntu-latest
-#    steps:
-#
-#      # Check out current repository
-#      - name: Fetch Sources
-#        uses: actions/checkout@v4
-#
-#      # Setup Gradle
-#      - name: Setup Gradle
-#        uses: gradle/actions/setup-gradle@v3
-#        with:
-#          gradle-home-cache-cleanup: true
-#
-#      # Run tests
-#      - name: Run Tests
-#        run: ./gradlew check
-#
-#      # Collect Tests Result of failed tests
-#      - name: Collect Tests Result
-#        if: ${{ failure() }}
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: tests-result
-#          path: ${{ github.workspace }}/build/reports/tests
-#
-#      # Upload the Kover report to CodeCov
-#      - name: Upload Code Coverage Report
-#        uses: codecov/codecov-action@v4
-#        with:
-#          files: ${{ github.workspace }}/build/reports/kover/report.xml
+  test:
+    name: Test
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # Set up Java environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Restore Ghidra Dependency cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ghidra/dependencies
+          key: "${{ runner.os }}-ghidra-dependencies-${{ hashFiles('**/fetchDependencies.gradle') }}"
+
+      # Run tests
+      - name: Run Tests
+        run: ./gradlew check
+
+      - name: Upload SARIF to GitHub using the upload-sarif action
+        uses: github/codeql-action/upload-sarif@v2
+        if: success() || failure()
+        with:
+          sarif_file: ${{ github.workspace }}/build/reports/detekt/merge.sarif
+
+      # Upload the Kover report to CodeCov
+      - name: Upload Code Coverage Report
+        uses: codecov/codecov-action@v4
+        if: success() || failure()
+        with:
+          files: ${{ github.workspace }}/build/reports/kover/report.xml
 
   release:
     name: Release draft
