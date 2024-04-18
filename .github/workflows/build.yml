@@ -65,6 +65,7 @@ jobs:
         with:
           path: ghidra/build
           key: ${{ steps.cache-ghidra.outputs.cache-primary-key }}
+        if: steps.cache-ghidra.outputs.cache-hit != 'true'
 
       # Build plugin
       - name: Build plugin

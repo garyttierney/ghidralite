@@ -1,4 +1,5 @@
 plugins {
+    `ghidralite-conventions`
     `ghidralite-kotlin-conventions`
 }
 

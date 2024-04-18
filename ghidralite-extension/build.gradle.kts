@@ -1,11 +1,13 @@
 plugins {
+    `ghidralite-conventions`
     `ghidralite-kotlin-conventions`
     `ghidralite-extension`
+
     alias(libs.plugins.composeDesktop)
 }
 
 ghidra {
-    installationDir = extra["ghidra.dir"] as String
+    installationDir = System.getProperty("ghidra.dir")
 }
 
 dependencies {
