@@ -74,6 +74,9 @@ jobs:
     name: Test
     needs: [ build ]
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: write
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v4
