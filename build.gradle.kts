@@ -28,7 +28,7 @@ koverReport {
             onCheck = true
         }
     }
-
+}
 
 configurations {
     kover.extendsFrom(reports)
