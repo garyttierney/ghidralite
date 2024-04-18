@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    api(projects.ghidraliteCore)
+    api(project(":ghidralite-core"))
 
     api(compose.desktop.windows_x64)
     api(compose.desktop.linux_x64)

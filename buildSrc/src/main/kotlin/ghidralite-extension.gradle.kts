@@ -11,36 +11,43 @@ val distSources = sourceSets.create("distribution") {
     }
 }
 
-open class GradleGhidraExtension(var installationDir: String = "<unknown>")
+open class GradleGhidraExtension(var path: File? = null)
+
 
 val ghidraExtension = project.extensions.create<GradleGhidraExtension>("ghidra")
+val ghidraProperties = Properties()
+
+afterEvaluate {
+    ghidraProperties.load(
+        FileReader(
+            ghidraExtension.path?.resolve("Ghidra/application.properties") ?: error("No Ghidra directory specified")
+        )
+    )
+}
 
 val generateProperties = tasks.register<WriteProperties>("generateExtensionProperties") {
     destinationFile = project.layout.buildDirectory.file("dist/extension.properties")
     group = "distribution"
 
-    doFirst {
-        val ghidraProperties = Properties()
-        ghidraProperties.load(FileReader("${ghidraExtension.installationDir}/Ghidra/application.properties"))
-
-        property("name", project.name)
-        property("createdOn", "now")
-        property("description", "Extension description")
-        property("version", ghidraProperties.getProperty("application.version"))
-    }
+    property("name", project.name)
+    property("createdOn", "now")
+    property("description", "Extension description")
+    property("version", ghidraProperties.getProperty("application.version"))
 }
 
 val createZip = tasks.register<Zip>("assembleDist") {
     destinationDirectory = project.layout.buildDirectory.dir("dist")
     group = "distribution"
 
-    into(project.name) {
+    val extensionName = project.name
+
+    into(extensionName) {
         into("lib") {
             from(configurations.named("runtimeClasspath"))
 
             from(tasks.named("jar")) {
                 filesMatching("*.jar") {
-                    name = "${project.name}.jar"
+                    name = "$extensionName.jar"
                 }
             }
 

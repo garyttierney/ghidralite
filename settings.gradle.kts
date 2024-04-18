@@ -1,7 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
 pluginManagement {
     repositories {
         google()
@@ -39,21 +37,6 @@ dependencyResolutionManagement {
         // JetBrains repositories for IntelliJ components
         maven("https://www.jetbrains.com/intellij-repository/releases/")
         maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
-
-        ivy {
-            url = uri(ghidraDir)
-
-            metadataSources {
-                gradleMetadata()
-            }
-
-            patternLayout {
-                artifact("Ghidra/[artifact].[ext]")
-                artifact("Ghidra/Configurations/[module]/lib/[artifact].[ext]")
-                artifact("Ghidra/Features/[module]/lib/[artifact].[ext]")
-                artifact("Ghidra/Framework/[module]/lib/[artifact].[ext]")
-            }
-        }
     }
 
     versionCatalogs {
@@ -70,3 +53,4 @@ include("ghidralite-core-ksp")
 include("ghidralite-extension")
 include("ghidralite-ui")
 include("ghidralite-standalone")
+includeBuild("ghidra")

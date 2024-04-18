@@ -7,8 +7,8 @@ plugins {
 
 
 dependencies {
-    implementation(projects.ghidraliteCoreKsp)
-    ksp(projects.ghidraliteCoreKsp)
+    implementation(project(":ghidralite-core-ksp"))
+    ksp(project(":ghidralite-core-ksp"))
 
     implementation(libs.kotlinx.coroutines)
     api(libs.intellij.util.base)

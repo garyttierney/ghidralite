@@ -7,7 +7,7 @@ plugins {
 }
 
 ghidra {
-    installationDir = System.getProperty("ghidra.dir")
+    path = rootDir.resolve("ghidra")
 }
 
 dependencies {
