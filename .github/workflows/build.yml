@@ -70,7 +70,7 @@ jobs:
       - name: Build plugin
         env:
           GHIDRA_DIR: ghidra/build/dist/ghidra_11.0.3_DEV
-        run: ./gradlew assembleDist -Dorg.gradle.project.ghidra.dir=ghidra/build/dist/ghidra_11.0.3_DEV
+        run: ./gradlew assembleDist -Dorg.gradle.project.ghidra.dir=`pwd`/ghidra/build/dist/ghidra_11.0.3_DEV
 
       - name: Qodana - Code Inspection
         uses: JetBrains/qodana-action@v2023.3.1
