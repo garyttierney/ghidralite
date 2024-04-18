@@ -18,7 +18,8 @@ jobs:
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v4
-
+        with:
+          submodules: recursive
       # Validate wrapper
       - name: Gradle Wrapper Validation
         uses: gradle/wrapper-validation-action@v2
