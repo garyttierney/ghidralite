@@ -49,7 +49,7 @@ jobs:
       - name: Fetch Ghidra Dependencies
         if: steps.cache-ghidra.outputs.cache-hit != 'true'
         run: |
-          ./gradlew -I gradle/support/fetchDependencies.gradle init
+          gradle -I gradle/support/fetchDependencies.gradle init
         working-directory: ghidra
 
       - name: Save Ghidra Dependency cache
