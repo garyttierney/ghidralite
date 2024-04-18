@@ -67,7 +67,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: artifacts-*
+          name: artifacts-ghidralite-extension
           path: ghidralite-extension/build/dist/*.zip
 
   # Run tests and upload a code coverage report
