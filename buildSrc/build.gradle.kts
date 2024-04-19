@@ -14,6 +14,7 @@ kotlin {
 
 dependencies {
     implementation(libs.kotlin.gradlePlugin)
+    implementation(libs.kotlin.serialization.gradlePlugin)
     implementation(libs.idea.gradlePlugin)
     implementation(libs.kover.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
