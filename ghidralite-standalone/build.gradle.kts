@@ -1,25 +1,14 @@
 plugins {
     `ghidralite-conventions`
     `ghidralite-kotlin-conventions`
-}
-
-group = "io.github.garyttierney"
-version = "unspecified"
-
-repositories {
-    mavenCentral()
+    alias(libs.plugins.composeDesktop)
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-    implementation(kotlin("stdlib-jdk8"))
-    implementation(libs.kotlinx.coroutines)
+    implementation(enforcedPlatform(project(":ghidralite-platform")))
+    implementation(project(":ghidralite-core"))
+    implementation(project(":ghidralite-ui"))
     implementation(libs.bundles.ghidra.all.modules)
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(17)
+    implementation(libs.jewel.standalone)
+    implementation(libs.jewel.decorated.window)
 }

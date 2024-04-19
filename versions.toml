@@ -1,7 +1,7 @@
 [versions]
 changelog = "2.2.0"
 commonmark = "0.22.0"
-composeDesktop = "1.6.10-dev1561"
+composeDesktop = "1.6.10-beta01"
 decompose = "2.2.2"
 detekt = "1.23.4"
 dokka = "1.8.20"
@@ -10,6 +10,7 @@ intellij = "241.14494.241"
 fastutil = "8.5.13"
 ghidra = "11.1"
 jewel = "0.17.0"
+jmhGradlePlugin = "0.7.2"
 jna = "5.14.0"
 kotlin = "1.9.23"
 kotlinSarif = "0.5.0"
@@ -27,9 +28,6 @@ poko = "0.13.1"
 
 commonmark-core = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
 commonmark-ext-autolink = { module = "org.commonmark:commonmark-ext-autolink", version.ref = "commonmark" }
-
-decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
-decompose-extensions-jetbrains = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
 
 fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 
@@ -64,9 +62,9 @@ ghidra-software-modeling = { module = "ghidra:SoftwareModeling", version.ref = "
 detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 idea-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "ideaGradlePlugin" }
+jmh-gradlePlugin = { module = "me.champeau.jmh:jmh-gradle-plugin", version.ref = "jmhGradlePlugin" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kover-gradlePlugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
-
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 kotlinter-gradlePlugin = { module = "org.jmailen.gradle:kotlinter-gradle", version.ref = "kotlinterGradlePlugin" }
 kotlinx-binaryCompatValidator-gradlePlugin = { module = "org.jetbrains.kotlinx:binary-compatibility-validator", version.ref = "kotlinxBinaryCompat" }

@@ -1,8 +1,9 @@
 plugins {
     `ghidralite-conventions`
     `ghidralite-kotlin-conventions`
+    `ghidralite-benchmark-conventions`
+    `java-library`
     alias(libs.plugins.ksp)
-    id("me.champeau.jmh") version "0.7.2"
 }
 
 
@@ -15,7 +16,7 @@ dependencies {
     api(libs.intellij.util.text.matching)
     implementation(libs.fastutil)
 
-    compileOnly(enforcedPlatform("ghidra:ghidra"))
-    compileOnly("ghidra:DB")
-    compileOnly("ghidra:SoftwareModeling")
+    compileOnlyApi(platform("ghidra:ghidra"))
+    compileOnlyApi("ghidra:DB")
+    compileOnlyApi("ghidra:SoftwareModeling")
 }
