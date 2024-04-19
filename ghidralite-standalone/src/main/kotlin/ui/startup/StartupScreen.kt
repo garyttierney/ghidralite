@@ -29,7 +29,7 @@ fun ApplicationScope.StartupScreen(viewModel: StartupViewModel = viewModel()) {
             Divider(orientation = Orientation.Vertical)
 
             Column(modifier = Modifier.weight(1.0f)) {
-                Row(horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.End)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.End), modifier = Modifier.fillMaxWidth()) {
                     DefaultButton(onClick = {}) {
                         Text("New Project")
                     }
