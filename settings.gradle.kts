@@ -40,6 +40,7 @@ dependencyResolutionManagement {
     }
 }
 
+
 rootProject.name = "ghidralite"
 
 include("ghidralite-core")

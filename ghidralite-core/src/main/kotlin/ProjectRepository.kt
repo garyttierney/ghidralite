@@ -12,10 +12,9 @@ class ProjectRepository(val gpm: GhidraliteProjectManager) {
 
     fun recentProjects(): List<ProjectLocator> = gpm.recentProjects.toList()
 
-    suspend fun load(path: Path): Project {
-        val locator = ProjectLocator(path.parent.toString(), path.name)
+    suspend fun load(path: ProjectLocator): Project {
         val project = withContext(Dispatchers.IO) {
-            gpm.openProject(locator, false, false)
+            gpm.openProject(path, false, false)
         }
 
         return project

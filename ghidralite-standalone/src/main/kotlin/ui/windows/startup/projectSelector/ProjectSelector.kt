@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import ghidra.framework.model.Project
+import ghidra.framework.model.ProjectLocator
 import io.github.garyttierney.ghidralite.standalone.ui.components.list.SelectableList
 import io.github.garyttierney.ghidralite.standalone.ui.components.list.rememberListModel
 import io.github.garyttierney.ghidralite.standalone.ui.theme.GhidraliteIcons
@@ -28,8 +29,9 @@ fun ProjectSelector(viewModel: ProjectSelectorViewModel = viewModel(), onProject
 
         it?.let { path ->
             val file = path.platformFile as File
+            val locator = ProjectLocator(file.parent, file.name)
 
-            viewModel.openProject(file.toPath()) { project ->
+            viewModel.openProject(locator) { project ->
                 onProjectSelected(project)
             }
         }
@@ -43,12 +45,16 @@ fun ProjectSelector(viewModel: ProjectSelectorViewModel = viewModel(), onProject
     )
 
     val projectListModel = rememberListModel(viewModel.recentProjects) { it.name }
-    SelectableList(selectableListModel = projectListModel, modifier = Modifier.fillMaxSize(), onItemSelected = {
-        viewModel.openProject(it.projectDir.toPath(), onProjectOpened = onProjectSelected)
-    }) {
+    fun onProjectLocatorSelected(locator: ProjectLocator) = viewModel.openProject(locator, onProjectSelected)
+
+    SelectableList(
+        selectableListModel = projectListModel,
+        modifier = Modifier.fillMaxSize(),
+        onItemSelected = ::onProjectLocatorSelected
+    ) {
         Column {
             Text(it.name)
-            BasicText(text = "${it.projectDir}/${it.name}.gpr", style = GhidraliteTypography.hint())
+            BasicText(text = it.projectDir.toString(), style = GhidraliteTypography.hint())
         }
     }
 }

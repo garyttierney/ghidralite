@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ghidra.framework.model.Project
+import ghidra.framework.model.ProjectLocator
 import io.github.garyttierney.ghidralite.core.ProjectRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,12 +17,9 @@ import java.nio.file.Path
 class ProjectSelectorViewModel(
     private val projects: ProjectRepository,
 ) : ViewModel() {
-    fun openProject(path: Path, onProjectOpened: (Project) -> Unit) {
+    fun openProject(path: ProjectLocator, onProjectOpened: (Project) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            val project = projects.load(path)
-            val files = project.projectData.rootFolder
-
-            onProjectOpened(project)
+            onProjectOpened(projects.load(path))
         }
     }
 
