@@ -15,7 +15,7 @@ import ghidra.program.util.ChangeManager
 import ghidra.util.task.MonitoredRunnable
 import ghidra.util.task.TaskLauncher
 import io.github.garyttierney.ghidralite.core.db.SymbolDbTable
-import io.github.garyttierney.ghidralite.core.db.SymbolRecord
+import io.github.garyttierney.ghidralite.core.db.SymbolLookupDetails
 import io.github.garyttierney.ghidralite.core.search.SearchResult
 import io.github.garyttierney.ghidralite.core.search.Searcher
 import io.github.garyttierney.ghidralite.core.search.index.IndexWriter
@@ -74,7 +74,7 @@ class QuickSearchPlugin(tool: PluginTool) : ProgramPlugin(tool), QuickSearchServ
 
         val symbolDbTable = SymbolDbTable(program.dbHandle.getTable("Symbols"))
         val symbolIndexLoader = SymbolIndexLoader(symbolDbTable)
-        val symbolIndexWriter = IndexWriter(indexes, SymbolRecord::class)
+        val symbolIndexWriter = IndexWriter(indexes, SymbolLookupDetails::class)
 
         TaskLauncher.launchModal("Indexing Program", MonitoredRunnable {
             it.message = "Indexing Symbols"
@@ -84,9 +84,7 @@ class QuickSearchPlugin(tool: PluginTool) : ProgramPlugin(tool), QuickSearchServ
                     indexes.load(symbolIndexLoader)
                 }
 
-                coroutineScope.launch {
-                    symbolIndexWriter.run(symbolChanges)
-                }
+                // TODO: re-enable index writer
             } catch (e: Exception) {
                 logger.error("Failed to index program", e)
             }

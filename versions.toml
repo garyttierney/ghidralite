@@ -1,8 +1,6 @@
 [versions]
-changelog = "2.2.0"
-commonmark = "0.22.0"
-composeDesktop = "1.6.10-beta01"
-decompose = "2.2.2"
+classgraph = "4.8.171"
+composeDesktop = "1.6.10-dev1593"
 detekt = "1.23.4"
 dokka = "1.8.20"
 ideaGradlePlugin = "1.1.8"
@@ -11,47 +9,47 @@ fastutil = "8.5.13"
 ghidra = "11.1"
 jewel = "0.17.0"
 jmhGradlePlugin = "0.7.2"
-jna = "5.14.0"
-kotlin = "1.9.23"
-kotlinSarif = "0.5.0"
+koin-bom = "3.6.0-wasm-alpha2"
+koinAnnotations = "1.3.1"
+kotlin = "2.0.0-RC1"
 kotlinpoet = "1.15.2"
-kotlinterGradlePlugin = "3.16.0"
-kotlinxBinaryCompat = "0.14.0"
 kotlinxCoroutines = "1.8.0"
+kotlinxSerialization = "1.6.3"
 kover = "0.7.6"
+ksp = "2.0.0-RC1-1.0.20"
 lucene = "9.10.0"
-ksp = "1.9.23-1.0.20"
 qodana = "2023.3.1"
-poko = "0.13.1"
 
 [libraries]
-
-commonmark-core = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
-commonmark-ext-autolink = { module = "org.commonmark:commonmark-ext-autolink", version.ref = "commonmark" }
-
+classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
 fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
-
 filePicker = { module = "com.darkrockstudios:mpfilepicker", version = "3.1.0" }
 
 intellij-icons = { module = "com.jetbrains.intellij.platform:icons", version.ref = "intellij" }
 intellij-util-text-matching = { module = "com.jetbrains.intellij.platform:util-text-matching", version.ref = "intellij" }
 intellij-util-base = { module = "com.jetbrains.intellij.platform:util-base", version.ref = "intellij" }
-intellij-util-ui = { module = "com.jetbrains.intellij.platform:util-ui", version.ref = "intellij" }
 
 jetbrains-compose-splitpane = { module = "org.jetbrains.compose.components:components-splitpane-desktop", version.ref = "composeDesktop" }
 
 lucene-core = { module = "org.apache.lucene:lucene-core", version.ref = "lucene" }
 
-kotlinSarif = { module = "io.github.detekt.sarif4k:sarif4k", version.ref = "kotlinSarif" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
+koin-compose = { module = "io.insert-koin:koin-compose" }
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-coroutines = { module = "io.insert-koin:koin-core-coroutines" }
+koin-test-junit5 = { module = "io.insert-koin:koin-test-junit5" }
+koin-annotations-bom = { module = "io.insert-koin:koin-annotations-bom", version.ref = "koinAnnotations" }
+koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koinAnnotations" }
+koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koinAnnotations" }
+
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines"}
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 
 jewel-standalone = { module = "org.jetbrains.jewel:jewel-int-ui-standalone-241", version.ref = "jewel" }
 jewel-decorated-window = { module = "org.jetbrains.jewel:jewel-int-ui-decorated-window-241", version.ref = "jewel" }
-
-jna-core = { module = "net.java.dev.jna:jna", version.ref = "jna" }
 
 ghidra-platform = { module = "ghidra:ghidra", version.ref = "ghidra" }
 ghidra-base = { module = "ghidra:Base", version.ref = "ghidra" }
@@ -64,25 +62,13 @@ dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", versi
 idea-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "ideaGradlePlugin" }
 jmh-gradlePlugin = { module = "me.champeau.jmh:jmh-gradle-plugin", version.ref = "jmhGradlePlugin" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlin-serialization-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kover-gradlePlugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
-kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
-kotlinter-gradlePlugin = { module = "org.jmailen.gradle:kotlinter-gradle", version.ref = "kotlinterGradlePlugin" }
-kotlinx-binaryCompatValidator-gradlePlugin = { module = "org.jetbrains.kotlinx:binary-compatibility-validator", version.ref = "kotlinxBinaryCompat" }
-poko-gradlePlugin = { module = "dev.drewhamilton.poko:poko-gradle-plugin", version.ref = "poko" }
 
 [bundles]
 ghidra-all-modules = ["ghidra-base", "ghidra-project", "ghidra-software-modeling"]
 
 [plugins]
-changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
 composeDesktop = { id = "org.jetbrains.compose", version.ref = "composeDesktop" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-ideaGradlePlugin = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "ideaGradlePlugin" }
-kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
-kotlinx-binaryCompatValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinxBinaryCompat" }
-kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinterGradlePlugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }

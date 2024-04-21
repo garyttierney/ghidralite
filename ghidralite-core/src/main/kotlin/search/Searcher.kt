@@ -11,7 +11,10 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class Searcher(private val indexes: Indexes) {
     @OptIn(FlowPreview::class)
-    suspend fun query(query: String, onDataAvailable: (List<SearchResult>) -> Unit) {
+    suspend fun query(
+        query: String,
+        onDataAvailable: (List<SearchResult>) -> Unit
+    ) {
         val queueCapacity = 50
         val isFqnQuery = query.contains("::")
         val pattern = if (isFqnQuery) "*$query" else query

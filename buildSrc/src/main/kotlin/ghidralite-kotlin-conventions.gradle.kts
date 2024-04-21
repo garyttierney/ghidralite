@@ -12,6 +12,8 @@ plugins {
     id("ghidralite-linting-conventions")
 
     kotlin("jvm")
+    kotlin("plugin.serialization")
+
     id("org.jetbrains.kotlinx.kover")
     id("io.gitlab.arturbosch.detekt")
 }

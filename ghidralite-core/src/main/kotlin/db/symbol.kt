@@ -5,8 +5,8 @@ import GhidraSchema
 import GhidraType
 import db.DBRecord
 import db.Table
-import io.github.garyttierney.ghidralite.core.LookupElement
 import ghidra.program.model.symbol.SymbolType
+import io.github.garyttierney.ghidralite.core.LookupElement
 
 data class SymbolLookupDetails(
     val id: Long,
