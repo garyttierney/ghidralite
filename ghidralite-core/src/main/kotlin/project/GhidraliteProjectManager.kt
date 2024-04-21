@@ -1,4 +1,4 @@
-package io.github.garyttierney.ghidralite.core
+package io.github.garyttierney.ghidralite.core.project
 
 import ghidra.framework.project.DefaultProjectManager
 

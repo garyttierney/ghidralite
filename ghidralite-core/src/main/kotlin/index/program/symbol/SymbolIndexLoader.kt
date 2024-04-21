@@ -12,19 +12,22 @@ import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.stream.consumeAsFlow
 
+fun SymbolRecord.recordToLookup(
+    table: SymbolDbTable,
+    namespaceCache: Long2ObjectArrayMap<SymbolLookupDetails> = Long2ObjectArrayMap()
+): SymbolLookupDetails {
+    val cacheLoader = Long2ObjectFunction { key -> table.get(key).recordToLookup(table, namespaceCache) }
+    return SymbolLookupDetails(
+        key,
+        type,
+        name,
+        if (parentId == 0L) null else namespaceCache.computeIfAbsent(parentId, cacheLoader)
+    )
+}
+
 class SymbolIndexLoader(private val table: SymbolDbTable) : IndexBulkLoader<SymbolLookupDetails> {
     override suspend fun load(): Flow<SymbolLookupDetails> {
         val namespaceCache = Long2ObjectArrayMap<SymbolLookupDetails>()
-
-        fun recordToLookup(record: SymbolRecord): SymbolLookupDetails {
-            val cacheLoader = Long2ObjectFunction { key -> recordToLookup(table.get(key)) }
-            return SymbolLookupDetails(
-                record.key,
-                record.type,
-                record.name,
-                if (record.parentId == 0L) null else namespaceCache.computeIfAbsent(record.parentId, cacheLoader)
-            )
-        }
 
         return table.all()
             .consumeAsFlow()
@@ -32,6 +35,8 @@ class SymbolIndexLoader(private val table: SymbolDbTable) : IndexBulkLoader<Symb
                 it.type == SymbolType.NAMESPACE || it.type == SymbolType.CLASS || it.name.isBlank()
                         || it.name.startsWith("Unwind") || it.name.startsWith("Catch")
             }
-            .map(::recordToLookup)
+            .map {
+                it.recordToLookup(table, namespaceCache)
+            }
     }
 }

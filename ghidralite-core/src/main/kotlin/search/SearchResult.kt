@@ -1,6 +1,5 @@
 package io.github.garyttierney.ghidralite.core.search
 
-import com.intellij.openapi.util.TextRange
 import io.github.garyttierney.ghidralite.core.LookupElement
 
 data class SearchResult(

@@ -11,15 +11,18 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import org.koin.compose.currentKoinScope
 import org.koin.compose.getKoin
 import org.koin.core.Koin
+import org.koin.core.scope.Scope
 import kotlin.reflect.KClass
 
-object KoinKey : CreationExtras.Key<Koin>
+object KoinKey : CreationExtras.Key<Scope>
 
 object ViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: KClass<T>, extras: CreationExtras): T {
-        return extras[KoinKey]?.get(modelClass) ?: error("Koin instance not found")
+        val scope = extras[KoinKey] ?: error("Koin instance not found")
+        return scope.get(modelClass)
     }
 }
 
@@ -29,7 +32,7 @@ internal fun <VM : ViewModel> viewModel(
 ): VM = androidx.lifecycle.viewmodel.compose.viewModel(
     modelClass,
     factory = ViewModelFactory,
-    extras = MutableCreationExtras().apply { set(KoinKey, getKoin()) })
+    extras = MutableCreationExtras().apply { set(KoinKey, currentKoinScope()) })
 
 @Composable
 internal inline fun <reified VM : ViewModel> viewModel(): VM = viewModel(VM::class)

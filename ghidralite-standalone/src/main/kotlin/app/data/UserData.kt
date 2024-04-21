@@ -1,11 +1,10 @@
 package io.github.garyttierney.ghidralite.standalone.app.data
 
-class UserData<T : Any>(private var innerValue: T) {
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+
+class UserData<T : Any>(innerValue: T) {
     var isDirty = false
-    var value: T
-        get() = innerValue
-        set(v) {
-            innerValue = v
-            isDirty = true
-        }
+    var value by mutableStateOf(innerValue)
 }

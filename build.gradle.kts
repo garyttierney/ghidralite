@@ -9,6 +9,7 @@ plugins {
     `ghidralite-linting-conventions`
     id("org.jetbrains.kotlinx.kover")
     id("io.gitlab.arturbosch.detekt")
+    alias(libs.plugins.composeDesktop) apply(false)
 }
 
 idea {
