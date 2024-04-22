@@ -2,7 +2,7 @@
 classgraph = "4.8.171"
 composeDesktop = "1.6.10-dev1593"
 detekt = "1.23.4"
-dokka = "1.8.20"
+dokka = "1.9.20"
 ideaGradlePlugin = "1.1.8"
 intellij = "241.14494.241"
 fastutil = "8.5.13"
