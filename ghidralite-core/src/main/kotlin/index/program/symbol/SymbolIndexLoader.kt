@@ -4,7 +4,7 @@ import ghidra.program.model.symbol.SymbolType
 import io.github.garyttierney.ghidralite.core.db.SymbolDbTable
 import io.github.garyttierney.ghidralite.core.db.SymbolLookupDetails
 import io.github.garyttierney.ghidralite.core.db.SymbolRecord
-import io.github.garyttierney.ghidralite.core.search.index.IndexBulkLoader
+import io.github.garyttierney.ghidralite.core.index.loader.IndexBulkLoader
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap
 import it.unimi.dsi.fastutil.longs.Long2ObjectFunction
 import kotlinx.coroutines.flow.Flow
@@ -25,8 +25,8 @@ fun SymbolRecord.recordToLookup(
     )
 }
 
-class SymbolIndexLoader(private val table: SymbolDbTable) : IndexBulkLoader<SymbolLookupDetails> {
-    override suspend fun load(): Flow<SymbolLookupDetails> {
+class SymbolIndexLoader(private val table: SymbolDbTable) : IndexBulkLoader<Long, SymbolLookupDetails> {
+    override suspend fun load(): Flow<Pair<Long, SymbolLookupDetails>> {
         val namespaceCache = Long2ObjectArrayMap<SymbolLookupDetails>()
 
         return table.all()
@@ -36,7 +36,7 @@ class SymbolIndexLoader(private val table: SymbolDbTable) : IndexBulkLoader<Symb
                         || it.name.startsWith("Unwind") || it.name.startsWith("Catch")
             }
             .map {
-                it.recordToLookup(table, namespaceCache)
+                it.key to it.recordToLookup(table, namespaceCache)
             }
     }
 }

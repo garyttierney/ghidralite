@@ -2,14 +2,14 @@ package io.github.garyttierney.ghidralite.core.search
 
 import com.intellij.psi.codeStyle.NameUtil
 import io.github.garyttierney.ghidralite.core.db.SymbolLookupDetails
-import io.github.garyttierney.ghidralite.core.search.index.Indexes
+import io.github.garyttierney.ghidralite.core.index.Index
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
 import java.util.*
 import kotlin.time.Duration.Companion.milliseconds
 
-class Searcher(private val indexes: Indexes) {
+class Searcher(private val index: Index<Long, SymbolLookupDetails>) {
     @OptIn(FlowPreview::class)
     suspend fun query(
         query: String,
@@ -27,12 +27,13 @@ class Searcher(private val indexes: Indexes) {
             .build()
 
         val resultFlow = channelFlow {
-            indexes.stream<SymbolLookupDetails>().forEach {
-                val label = if (isFqnQuery) it.fullyQualifiedName else it.label
+            index.process {
+                val value = it.value
+                val label = if (isFqnQuery) value.fullyQualifiedName else value.label
                 val score = labelMatcher.matchingDegree(label, false)
 
                 if (score > 0) {
-                    trySendBlocking(SearchResult(it, score, emptyList()))
+                    trySendBlocking(SearchResult(value, score, emptyList()))
                 }
             }
         }

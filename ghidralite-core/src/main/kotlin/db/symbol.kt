@@ -7,14 +7,15 @@ import db.DBRecord
 import db.Table
 import ghidra.program.model.symbol.SymbolType
 import io.github.garyttierney.ghidralite.core.LookupElement
+import io.github.garyttierney.ghidralite.core.index.entity.IndexableEntity
 
 data class SymbolLookupDetails(
     val id: Long,
     val type: SymbolType,
     override val label: String,
     override val parent: SymbolLookupDetails?
-) : LookupElement {
-    override val key: Any = id
+) : LookupElement, IndexableEntity<Long> {
+    override val key: Long = id
     override val icon
         get() = when (type) {
             SymbolType.FUNCTION -> "/expui/nodes/function_dark.svg"

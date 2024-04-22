@@ -5,6 +5,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.ComposePanel
+import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.input.key.Key
@@ -58,21 +59,15 @@ class QuickSearchAction(
     }
 
     override fun actionPerformed(ctx: ProgramActionContext) {
-        val window = JFrame()
 
         val originalLocation = previewListing.cursorLocation
 
+        val window = ComposeWindow()
         // creating ComposePanel
-        val composePanel = ComposePanel()
         window.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
-        window.contentPane.add(composePanel, BorderLayout.CENTER)
         window.isUndecorated = true
         window.size = Dimension(480, 360)
-        window.addKeyListener(object : KeyAdapter() {
-            override fun keyTyped(e: KeyEvent) = e.consume()
-            override fun keyPressed(e: KeyEvent) = e.consume()
-            override fun keyReleased(e: KeyEvent) = e.consume()
-        })
+
         val focusRequester = FocusRequester()
         val parentWindow = SwingUtilities.windowForComponent(ctx.sourceComponent)
         val popupOffset = Alignment.Center.align(
@@ -86,7 +81,7 @@ class QuickSearchAction(
         KeyboardFocusManager.setCurrentKeyboardFocusManager(kfm)
 
         window.setLocation(parentWindow.x + popupOffset.x, parentWindow.y + popupOffset.y)
-        composePanel.setContent {
+        window.setContent {
             var wasFocused by remember { mutableStateOf(false) }
             var searchQuery by remember { mutableStateOf("") }
             var searchJob by remember { mutableStateOf<Job?>(null) }
