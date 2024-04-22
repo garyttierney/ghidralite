@@ -1,10 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-  "release-type": "java",
+  "release-type": "simple",
   "changelog-type": "github",
   "packages": {
     ".": {
-      "extra-files": ["gradle.properties"]
+      "version-file": "gradle.properties"
     }
   }
 }
