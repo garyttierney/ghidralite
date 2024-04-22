@@ -169,13 +169,16 @@ fun SelectableLazyItemScope.QuickSearchResult(item: SearchResult) {
             contentDescription = item.element.label,
         )
 
-        val matchingRangeAnnotations = item.fragments.map { range ->
-            AnnotatedString.Range(
-                SpanStyle(background = JewelTheme.colorPalette.yellow(3)),
-                range.first,
-                range.last
-            )
-        }
+        val matchingRangeBackground = JewelTheme.colorPalette.yellow(3)
+        val matchingRangeAnnotations = item.fragments()
+            .map { range ->
+                AnnotatedString.Range(
+                    SpanStyle(background = matchingRangeBackground),
+                    range.first,
+                    range.last
+                )
+            }
+            .toList()
 
         val annotatedLabel = buildAnnotatedString {
             append(AnnotatedString(text = item.element.label, spanStyles = matchingRangeAnnotations))

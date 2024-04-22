@@ -4,12 +4,13 @@ import io.github.garyttierney.ghidralite.core.index.change.IndexChange
 import io.github.garyttierney.ghidralite.core.index.change.IndexChangeFlowProvider
 import io.github.garyttierney.ghidralite.core.index.entity.IndexableEntity
 import io.github.garyttierney.ghidralite.core.index.entity.IndexableEntityProvider
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.seconds
+
+private const val BATCH_SIZE = 50
 
 class EntityIndexer<K : Any, T : IndexableEntity<K>, S : Any>(
     private val index: Index<K, T>,
@@ -19,13 +20,12 @@ class EntityIndexer<K : Any, T : IndexableEntity<K>, S : Any>(
         val changeFlow = changeFlowProvider.getFlow()
         val channel = changeFlow.produceIn(this)
 
-        @OptIn(DelicateCoroutinesApi::class)
         while (isActive) {
             val batchTimeout = 2.seconds
             val removals = mutableSetOf<K>()
             val changes = mutableMapOf<K, T>()
 
-            while (removals.size + changes.size < 50) {
+            while (removals.size + changes.size < BATCH_SIZE) {
                 val item = withTimeoutOrNull(batchTimeout) { channel.receive() }
                 if (item == null) {
                     break

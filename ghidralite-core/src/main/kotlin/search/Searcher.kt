@@ -30,10 +30,12 @@ class Searcher(private val index: Index<Long, SymbolLookupDetails>) {
             index.process {
                 val value = it.value
                 val label = if (isFqnQuery) value.fullyQualifiedName else value.label
-                val score = labelMatcher.matchingDegree(label, false)
+                val labelOffset = label.length - value.label.length
+                val fragments = labelMatcher.matchingFragments(label)
+                val score = labelMatcher.matchingDegree(label, false, fragments)
 
                 if (score > 0) {
-                    trySendBlocking(SearchResult(value, score, emptyList()))
+                    trySendBlocking(SearchResult(value, score, fragments, labelOffset))
                 }
             }
         }
