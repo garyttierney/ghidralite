@@ -29,7 +29,7 @@ val generateProperties = tasks.register<WriteProperties>("generateExtensionPrope
     destinationFile = project.layout.buildDirectory.file("dist/extension.properties")
     group = "distribution"
 
-    property("name", project.name)
+    property("name", "${project.name}-${project.version}")
     property("createdOn", "now")
     property("description", "Extension description")
     property("version", ghidraProperties.getProperty("application.version"))

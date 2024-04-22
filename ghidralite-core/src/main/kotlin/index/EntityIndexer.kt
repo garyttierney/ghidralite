@@ -7,6 +7,7 @@ import io.github.garyttierney.ghidralite.core.index.entity.IndexableEntityProvid
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.produceIn
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.seconds
 
@@ -19,7 +20,7 @@ class EntityIndexer<K : Any, T : IndexableEntity<K>, S : Any>(
         val channel = changeFlow.produceIn(this)
 
         @OptIn(DelicateCoroutinesApi::class)
-        while (!channel.isClosedForReceive) {
+        while (isActive) {
             val batchTimeout = 2.seconds
             val removals = mutableSetOf<K>()
             val changes = mutableMapOf<K, T>()

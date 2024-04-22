@@ -80,8 +80,8 @@ class ProgramChangeWatcher(private val scope: CoroutineScope) : DomainObjectList
             for (changeRecord in ev) {
                 changeRecord as ProgramChangeRecord
 
-                val obj = changeRecord.`object`
-                val group = interestTable[changeRecord.eventType] ?: error("No change group found")
+                val obj = changeRecord.`object` ?: continue
+                val group = interestTable[changeRecord.eventType] ?: continue
 
                 val change = when (changeRecord.eventType) {
                     group.addedEvent -> IndexChange.Added(obj)

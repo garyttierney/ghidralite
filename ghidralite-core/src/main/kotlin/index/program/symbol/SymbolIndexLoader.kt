@@ -32,8 +32,8 @@ class SymbolIndexLoader(private val table: SymbolDbTable) : IndexBulkLoader<Long
         return table.all()
             .consumeAsFlow()
             .filterNot {
-                it.type == SymbolType.NAMESPACE || it.type == SymbolType.CLASS || it.name.isBlank()
-                        || it.name.startsWith("Unwind") || it.name.startsWith("Catch")
+                it.type == SymbolType.NAMESPACE || it.type == SymbolType.CLASS || it.type == SymbolType.LOCAL_VAR
+                        || it.name.isBlank() || it.name.startsWith("Unwind") || it.name.startsWith("Catch")
             }
             .map {
                 it.key to it.recordToLookup(table, namespaceCache)
