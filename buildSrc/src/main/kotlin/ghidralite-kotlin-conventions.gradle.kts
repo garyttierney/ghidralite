@@ -52,6 +52,7 @@ tasks {
                 outputLocation = sarifReport
             }
         }
+
     }
 }
 
@@ -73,5 +74,6 @@ kotlin {
     jvmToolchain {
         vendor = JvmVendorSpec.JETBRAINS
         languageVersion = JavaLanguageVersion.of(17)
+
     }
 }
