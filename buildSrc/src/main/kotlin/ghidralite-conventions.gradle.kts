@@ -4,4 +4,4 @@ plugins {
 }
 
 group = "io.github.garyttierney.ghidralite"
-version = rootDir.resolve("version.txt").readText(Charsets.UTF_8).trim(' ', '\n')
+version = ext["project.version"] as String
