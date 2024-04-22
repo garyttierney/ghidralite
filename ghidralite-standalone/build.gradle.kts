@@ -12,7 +12,7 @@ dependencies {
 
     implementation(libs.classgraph)
     implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0-alpha01")
-    implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha01")
+    implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-dev1593")
 
     implementation("ghidra:x86:11.0.3")
     implementation(platform(libs.koin.bom))
