@@ -32,12 +32,6 @@ dependencyResolutionManagement {
         maven("https://www.jetbrains.com/intellij-repository/releases/")
         maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
     }
-
-    versionCatalogs {
-        create("libs") {
-            from(files("versions.toml"))
-        }
-    }
 }
 
 
