@@ -21,4 +21,7 @@ dependencies {
 
     // TODO: should be part of ghidralite-ui API
     implementation(libs.jewel.standalone)
+    implementation(compose.desktop.linux_x64)
+    implementation(compose.desktop.windows_x64)
+    implementation(compose.desktop.common)
 }

@@ -20,7 +20,6 @@ idea {
     }
 }
 
-
 val reports = configurations.register("reports") { isCanBeDeclared = true }
 
 koverReport {

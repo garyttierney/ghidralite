@@ -11,19 +11,19 @@ import ghidra.framework.plugintool.PluginTool
 import ghidra.framework.plugintool.util.PluginStatus
 import ghidra.program.database.ProgramDB
 import ghidra.program.model.listing.Program
+import ghidra.program.model.symbol.Symbol
 import ghidra.program.util.ChangeManager
 import ghidra.util.task.MonitoredRunnable
 import ghidra.util.task.TaskLauncher
 import io.github.garyttierney.ghidralite.core.db.SymbolDbTable
 import io.github.garyttierney.ghidralite.core.db.SymbolLookupDetails
+import io.github.garyttierney.ghidralite.core.index.EntityIndexer
+import io.github.garyttierney.ghidralite.core.index.storage.InMemoryIndex
 import io.github.garyttierney.ghidralite.core.search.SearchResult
 import io.github.garyttierney.ghidralite.core.search.Searcher
-import io.github.garyttierney.ghidralite.core.search.index.IndexWriter
-import io.github.garyttierney.ghidralite.core.search.index.Indexes
 import io.github.garyttierney.ghidralite.core.search.index.program.ProgramChangeWatcher
-import io.github.garyttierney.ghidralite.core.search.index.program.programChangeInterest
 import io.github.garyttierney.ghidralite.core.search.index.program.symbol.SymbolIndexLoader
-import io.github.garyttierney.ghidralite.core.search.index.program.symbol.SymbolSnapshotStrategy
+import io.github.garyttierney.ghidralite.core.search.symbol.SymbolProvider
 import io.github.garyttierney.ghidralite.extension.GhidralitePluginPackage
 import kotlinx.coroutines.*
 import org.apache.logging.log4j.LogManager.getLogger
@@ -41,8 +41,8 @@ import org.apache.logging.log4j.LogManager.getLogger
 class QuickSearchPlugin(tool: PluginTool) : ProgramPlugin(tool), QuickSearchService {
     private val logger = getLogger(QuickSearchPlugin::class.java)
     private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private val indexes = Indexes()
-    private val searcher = Searcher(indexes)
+    private val symbolIndex = InMemoryIndex<Long, SymbolLookupDetails>()
+    private val searcher = Searcher(symbolIndex)
 
     private lateinit var goToService: GoToService
     private lateinit var codeViewerService: CodeViewerService
@@ -59,32 +59,33 @@ class QuickSearchPlugin(tool: PluginTool) : ProgramPlugin(tool), QuickSearchServ
     override fun programActivated(program: Program) {
         previewListing.program = program
 
-        val changeWatcher = ProgramChangeWatcher(coroutineScope)
-        program.addListener(changeWatcher)
-
-        val symbolChanges = changeWatcher.registerInterest(
-            programChangeInterest(
-                SymbolSnapshotStrategy,
-                ChangeManager.DOCR_SYMBOL_ADDED,
-                ChangeManager.DOCR_SYMBOL_RENAMED,
-            )
-        )
+        val programChangeWatcher = ProgramChangeWatcher(coroutineScope)
+        program.addListener(programChangeWatcher)
 
         program as ProgramDB
 
         val symbolDbTable = SymbolDbTable(program.dbHandle.getTable("Symbols"))
         val symbolIndexLoader = SymbolIndexLoader(symbolDbTable)
-        val symbolIndexWriter = IndexWriter(indexes, SymbolLookupDetails::class)
+        val symbolIndexer = EntityIndexer(symbolIndex, SymbolProvider())
 
         TaskLauncher.launchModal("Indexing Program", MonitoredRunnable {
             it.message = "Indexing Symbols"
 
             try {
                 runBlocking {
-                    indexes.load(symbolIndexLoader)
+                    symbolIndex.load(symbolIndexLoader)
                 }
 
-                // TODO: re-enable index writer
+                coroutineScope.launch(Dispatchers.IO) {
+                    symbolIndexer.index(
+                        programChangeWatcher.registerInterest<Symbol>(
+                            addedEvent = ChangeManager.DOCR_SYMBOL_ADDED,
+                            removedEvent = ChangeManager.DOCR_SYMBOL_REMOVED,
+                            ChangeManager.DOCR_SYMBOL_RENAMED,
+                            ChangeManager.DOCR_SYMBOL_SCOPE_CHANGED,
+                        )
+                    )
+                }
             } catch (e: Exception) {
                 logger.error("Failed to index program", e)
             }
