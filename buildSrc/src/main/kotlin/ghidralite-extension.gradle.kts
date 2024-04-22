@@ -36,6 +36,7 @@ val generateProperties = tasks.register<WriteProperties>("generateExtensionPrope
 }
 
 val createZip = tasks.register<Zip>("assembleDist") {
+    archiveFileName = "${project.name}.zip"
     destinationDirectory = project.layout.buildDirectory.dir("dist")
     group = "distribution"
 
