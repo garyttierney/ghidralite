@@ -4,7 +4,12 @@
   "changelog-type": "github",
   "packages": {
     ".": {
-      "extra-files": ["gradle.properties"]
+      "changelog-path": "CHANGELOG.md",
+      "release-type": "java",
+      "bump-minor-pre-major": false,
+      "bump-patch-for-minor-pre-major": false,
+      "draft": false,
+      "prerelease": false
     }
   }
 }
