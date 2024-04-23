@@ -108,7 +108,6 @@ jobs:
         id: release-please
         with:
           config-file: release-please-config.json
-          release-type: java
 
       - name: "Download Github Artifacts"
         uses: actions/download-artifact@v4
