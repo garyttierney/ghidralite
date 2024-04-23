@@ -63,29 +63,22 @@ jobs:
           key: ${{ steps.cache-ghidra.outputs.cache-primary-key }}
         if: steps.cache-ghidra.outputs.cache-hit != 'true'
 
-      # Build plugin
-      - name: Build plugin
-        run: ./gradlew assembleDist
+      - name: Build and test
+        run: ./gradlew check assembleDist
 
-      # Store already-built plugin as an artifact for downloading
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: artifacts-ghidralite-extension
           path: ghidralite-extension/build/dist/*.zip
 
-      # Run tests
-      - name: Run Tests
-        run: ./gradlew check
-
-      - name: Upload SARIF to GitHub using the upload-sarif action
+      - name: Upload code quality scans
         uses: github/codeql-action/upload-sarif@v3
         if: success() || failure()
         with:
           sarif_file: ${{ github.workspace }}/build/reports/detekt/merge.sarif
 
-      # Upload the Kover report to CodeCov
-      - name: Upload Code Coverage Report
+      - name: Upload code coverage report
         uses: codecov/codecov-action@v4
         if: success() || failure()
         with:
@@ -93,7 +86,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   release:
-    name: Release draft
+    name: Release
     if: github.event_name != 'pull_request'
     needs: [ build ]
     runs-on: ubuntu-latest
