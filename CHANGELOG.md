@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 (2024-04-23)
+
+## What's Changed
+* feat: add kotlin scripting component by @garyttierney in https://github.com/garyttierney/ghidralite/pull/25
+* chore: bootstrap releases for path: . by @garyttierney in https://github.com/garyttierney/ghidralite/pull/26
+* chore(main): release 0.3.2-SNAPSHOT by @github-actions in https://github.com/garyttierney/ghidralite/pull/27
+
+
+**Full Changelog**: https://github.com/garyttierney/ghidralite/compare/v0.3.1...v0.4.0
+
 ## [0.3.1](https://github.com/garyttierney/ghidralite/compare/v0.3.0...v0.3.1) (2024-04-23)
 
 
