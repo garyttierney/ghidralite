@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2-SNAPSHOT](https://github.com/garyttierney/ghidralite/compare/v0.3.1-SNAPSHOT...v0.3.2-SNAPSHOT) (2024-04-23)
+
+
+### Bug Fixes
+
+* **core:** restore matching text fragments ([efe11b4](https://github.com/garyttierney/ghidralite/commit/efe11b4aed4316e384479ec5b612f6f5a390b801))
+
 ## [0.3.1](https://github.com/garyttierney/ghidralite/compare/v0.3.0...v0.3.1) (2024-04-22)
 
 
