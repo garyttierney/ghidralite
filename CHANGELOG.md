@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.1](https://github.com/garyttierney/ghidralite/compare/v0.3.0...v0.3.1) (2024-04-23)
+
+
+### Bug Fixes
+
+* **core:** don't index trivial/empty symbols ([273adf2](https://github.com/garyttierney/ghidralite/commit/273adf2d2ba45e4535ff6f47f87d7d9de4f5e96e))
+* **core:** restore matching text fragments ([efe11b4](https://github.com/garyttierney/ghidralite/commit/efe11b4aed4316e384479ec5b612f6f5a390b801))
+* **extension:** include version number in extension name ([d5a2ba0](https://github.com/garyttierney/ghidralite/commit/d5a2ba06d3ada7fa0f6a21020beb73cb3e42d7ad))
+* **extension:** strip version from dist zip file ([1c74831](https://github.com/garyttierney/ghidralite/commit/1c74831858733831b1be7b4e287334ae9a84c9e8))
+
 ## [0.3.1](https://github.com/garyttierney/ghidralite/compare/v0.3.0...v0.3.1) (2024-04-22)
 
 
