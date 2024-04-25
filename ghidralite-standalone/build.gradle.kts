@@ -37,3 +37,24 @@ dependencies {
     implementation(compose.desktop.windows_x64)
     implementation(compose.uiTooling)
 }
+
+compose.desktop {
+    application {
+        mainClass = "io.github.garyttierney.ghidralite.standalone.MainKt"
+        jvmArgs("-Djava.system.class.loader=ghidra.GhidraClassLoader")
+
+        nativeDistributions {
+            modules(
+                "java.compiler",
+                "java.instrument",
+                "java.management",
+                "java.naming",
+                "java.net.http",
+                "java.rmi",
+                "java.scripting",
+                "java.sql",
+                "jdk.unsupported"
+            )
+        }
+    }
+}

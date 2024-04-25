@@ -44,7 +44,7 @@ class EntityIndexer<K : Any, T : IndexableEntity<K>, S : Any>(
                 }
             }
 
-            index.write(changes.asIterable())
+            index.putAll(changes)
             removals.forEach(index::remove)
 
             removals.clear()

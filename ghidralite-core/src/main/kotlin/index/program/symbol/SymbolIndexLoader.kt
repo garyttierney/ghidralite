@@ -1,5 +1,6 @@
 package io.github.garyttierney.ghidralite.core.search.index.program.symbol
 
+import ghidra.program.database.symbol.SymbolManager
 import ghidra.program.model.symbol.SymbolType
 import io.github.garyttierney.ghidralite.core.db.SymbolDbTable
 import io.github.garyttierney.ghidralite.core.db.SymbolLookupDetails

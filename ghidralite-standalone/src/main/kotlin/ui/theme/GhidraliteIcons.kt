@@ -8,11 +8,13 @@ import org.jetbrains.jewel.ui.component.*
 object GhidraliteIcons {
     private fun iconProvider(
         name: String,
+        hasDark: Boolean = true,
     ): @Composable (modifier: Modifier) -> Unit {
         return { modifier ->
-            val icon = when (JewelTheme.isDark) {
-                true -> "${name}_dark.svg"
-                else -> "$name.svg"
+            val icon = if (JewelTheme.isDark && hasDark) {
+                "${name}_dark.svg"
+            } else {
+                "$name.svg"
             }
 
             Icon(
@@ -23,6 +25,8 @@ object GhidraliteIcons {
             )
         }
     }
+
+    val Ghidralite = iconProvider("/icons/ghidralite", hasDark = false)
 
     object General {
         val Search = iconProvider("/expui/general/search")

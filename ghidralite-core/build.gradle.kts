@@ -16,7 +16,7 @@ dependencies {
     api(libs.intellij.util.text.matching)
     implementation(libs.fastutil)
 
-    compileOnly(platform("ghidra:ghidra"))
-    compileOnly("ghidra:DB")
-    compileOnly("ghidra:SoftwareModeling")
+    compileOnlyApi(platform("ghidra:ghidra"))
+    compileOnlyApi("ghidra:DB")
+    compileOnlyApi("ghidra:SoftwareModeling")
 }

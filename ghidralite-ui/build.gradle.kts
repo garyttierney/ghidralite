@@ -15,7 +15,6 @@ dependencies {
     implementation(libs.jetbrains.compose.splitpane)
     implementation(libs.filePicker)
     implementation(libs.intellij.icons)
-
     implementation(libs.kotlin.reflect)
 
 }
