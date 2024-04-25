@@ -16,6 +16,7 @@ import io.github.garyttierney.ghidralite.standalone.ui.components.select.remembe
 import io.github.garyttierney.ghidralite.standalone.ui.theme.GhidraliteIcons
 import io.github.garyttierney.ghidralite.standalone.ui.theme.GhidraliteTypography
 import io.github.garyttierney.ghidralite.standalone.ui.viewModel
+import io.github.garyttierney.ghidralite.ui.components.PlaceholderIcon
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
@@ -62,7 +63,12 @@ fun ProjectSelector(viewModel: ProjectSelectorViewModel = viewModel(), onWorkspa
         modifier = Modifier.fillMaxSize(),
         onItemSelected = ::onProjectLocatorSelected,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            PlaceholderIcon(it.name)
             Column(modifier = Modifier.weight(1f)) {
                 Text(it.name)
                 Hint(it.projectDir.toString())
