@@ -21,7 +21,7 @@ import io.github.garyttierney.ghidralite.core.index.EntityIndexer
 import io.github.garyttierney.ghidralite.core.index.storage.InMemoryIndex
 import io.github.garyttierney.ghidralite.core.search.SearchResult
 import io.github.garyttierney.ghidralite.core.search.Searcher
-import io.github.garyttierney.ghidralite.core.search.index.program.ProgramChangeWatcher
+import io.github.garyttierney.ghidralite.core.index.program.ProgramChangeWatcher
 import io.github.garyttierney.ghidralite.core.search.index.program.symbol.SymbolIndexLoader
 import io.github.garyttierney.ghidralite.core.search.symbol.SymbolProvider
 import io.github.garyttierney.ghidralite.extension.GhidralitePluginPackage

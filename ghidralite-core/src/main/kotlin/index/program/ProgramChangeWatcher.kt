@@ -1,4 +1,4 @@
-package io.github.garyttierney.ghidralite.core.search.index.program
+package io.github.garyttierney.ghidralite.core.index.program
 
 import ghidra.framework.model.DomainObjectChangedEvent
 import ghidra.framework.model.DomainObjectListener

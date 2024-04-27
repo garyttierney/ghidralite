@@ -17,7 +17,11 @@ import org.jetbrains.jewel.window.TitleBar
 import org.jetbrains.jewel.window.newFullscreenControls
 
 @Composable
-fun DecoratedWindowScope.WorkspaceTitleBar(programs: List<DomainFile>, selectedProgram: DomainFile?, onProgramSelected: (DomainFile) -> Unit) {
+fun DecoratedWindowScope.WorkspaceTitleBar(
+    programs: List<DomainFile>,
+    selectedProgram: DomainFile?,
+    onProgramSelected: (DomainFile) -> Unit
+) {
     val programsModel = rememberSelectionModel(programs)
 
     TitleBar(

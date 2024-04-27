@@ -1,4 +1,4 @@
-package io.github.garyttierney.ghidralite.ui.components
+package io.github.garyttierney.ghidralite.ui.components.icons
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box

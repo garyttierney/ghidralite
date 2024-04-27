@@ -16,7 +16,7 @@ import io.github.garyttierney.ghidralite.standalone.ui.components.select.remembe
 import io.github.garyttierney.ghidralite.standalone.ui.theme.GhidraliteIcons
 import io.github.garyttierney.ghidralite.standalone.ui.theme.GhidraliteTypography
 import io.github.garyttierney.ghidralite.standalone.ui.viewModel
-import io.github.garyttierney.ghidralite.ui.components.PlaceholderIcon
+import io.github.garyttierney.ghidralite.ui.components.icons.PlaceholderIcon
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation

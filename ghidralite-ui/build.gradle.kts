@@ -16,5 +16,5 @@ dependencies {
     implementation(libs.filePicker)
     implementation(libs.intellij.icons)
     implementation(libs.kotlin.reflect)
-
+    implementation(libs.kotlinx.serialization.json)
 }

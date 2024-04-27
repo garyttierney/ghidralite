@@ -1,10 +1,11 @@
 package io.github.garyttierney.ghidralite.standalone.app.ui.views.workspace
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewModelScope
 import io.github.garyttierney.ghidralite.standalone.app.task.rememberTaskRunner
+import io.github.garyttierney.ghidralite.standalone.app.ui.views.workspace.listing.ListingView
 import io.github.garyttierney.ghidralite.standalone.app.ui.views.workspace.statusBar.WorkspaceStatusBar
 import io.github.garyttierney.ghidralite.standalone.app.ui.views.workspace.titleBar.WorkspaceTitleBar
 import io.github.garyttierney.ghidralite.standalone.ui.components.surface.Panel
@@ -30,9 +31,13 @@ fun DecoratedWindowScope.WorkspaceView() {
         }
     )
 
+
+
     Panel {
         Column {
-            Spacer(modifier = Modifier.weight(1f, true))
+            workspaceViewModel.activeProgram?.let { program ->
+                ListingView(modifier = Modifier.weight(1f), program = program)
+            }
             WorkspaceStatusBar()
         }
     }
