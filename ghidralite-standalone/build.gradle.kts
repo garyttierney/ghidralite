@@ -1,4 +1,4 @@
-plugins {
+ plugins {
     `ghidralite-conventions`
     `ghidralite-kotlin-conventions`
     alias(libs.plugins.ksp)

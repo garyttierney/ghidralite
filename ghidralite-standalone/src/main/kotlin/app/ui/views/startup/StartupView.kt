@@ -6,7 +6,10 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import ghidra.framework.model.Project
 import io.github.garyttierney.ghidralite.standalone.app.ui.GhidraliteApplicationScreen
 import io.github.garyttierney.ghidralite.standalone.app.ui.LocalApplicationScreenHolder
 import io.github.garyttierney.ghidralite.standalone.app.ui.views.startup.projectSelector.ProjectSelector
@@ -22,29 +25,41 @@ import org.jetbrains.jewel.ui.theme.colorPalette
 import org.jetbrains.jewel.window.DecoratedWindowScope
 import org.jetbrains.jewel.window.TitleBar
 
-@Composable
-fun DecoratedWindowScope.StartupView() {
-    val viewModel = viewModel<StartupViewModel>()
+class ProjectScreen(val project: Project) : GhidraliteApplicationScreen() {
+    init {
+        preferredSize = DpSize(360.dp, 480.dp)
+    }
 
-    TitleBar { Text("Welcome to Ghidralite") }
+    @Composable
+    override fun DecoratedWindowScope.content() {
+        val viewModel = viewModel<StartupViewModel>()
 
-    Panel {
-        Row {
-            Column(modifier = Modifier.requiredWidth(240.dp).padding(24.dp)) {
-                StartupInformation()
-                StartupOptionList(onOptionChanged = { viewModel.selectedOption = it })
-            }
+        TitleBar { Text("Welcome to Ghidralite") }
 
-            Column(
-                modifier = Modifier.weight(1.0f).requiredWidthIn(min = 300.dp)
-                    .fillMaxSize()
-                    .background(JewelTheme.colorPalette.grey(1))
-                    .padding(24.dp)
-            ) {
-                StartupOptionDetail(selectedOption = viewModel.selectedOption)
+        Panel {
+            Row {
+                Column(modifier = Modifier.requiredWidth(240.dp).padding(24.dp)) {
+                    StartupInformation()
+                    StartupOptionList(onOptionChanged = { viewModel.selectedOption = it })
+                }
+
+                Column(
+                    modifier = Modifier.weight(1.0f).requiredWidthIn(min = 300.dp)
+                        .fillMaxSize()
+                        .background(JewelTheme.colorPalette.grey(1))
+                        .padding(24.dp)
+                ) {
+                    StartupOptionDetail(selectedOption = viewModel.selectedOption)
+                }
             }
         }
     }
+}
+
+
+@Composable
+fun DecoratedWindowScope.StartupView() {
+
 }
 
 @Composable

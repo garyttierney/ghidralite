@@ -2,7 +2,9 @@ package io.github.garyttierney.ghidralite.standalone.app.ui
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
-import io.github.garyttierney.ghidralite.standalone.app.ui.views.startup.StartupView
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.window.rememberWindowState
+import io.github.garyttierney.ghidralite.standalone.app.ui.views.projectSelector.ProjectSelectorView
 import io.github.garyttierney.ghidralite.standalone.app.ui.views.workspace.Workspace
 import io.github.garyttierney.ghidralite.standalone.app.ui.views.workspace.WorkspaceView
 import io.github.garyttierney.ghidralite.standalone.ui.viewModel
@@ -14,21 +16,32 @@ import org.koin.mp.KoinPlatformTools
 
 
 @Stable
-interface GhidraliteApplicationScreen {
+abstract class GhidraliteApplicationScreen {
+
+    var preferredSize: DpSize = DpSize.Unspecified
 
     @Composable
-    fun DecoratedWindowScope.content()
+    abstract fun DecoratedWindowScope.content()
 
     @Stable
-    data object StartupScreen : GhidraliteApplicationScreen {
+    data object StartupScreen : GhidraliteApplicationScreen() {
         @Composable
         override fun DecoratedWindowScope.content() {
-            StartupView()
+            ProjectSelectorView()
         }
     }
 
     @Stable
-    data class WorkspaceScreen(val workspace: Workspace) : GhidraliteApplicationScreen {
+    data object ProjectScreen : GhidraliteApplicationScreen() {
+        @Composable
+        override fun DecoratedWindowScope.content() {
+            ProjectSelectorView()
+        }
+    }
+
+
+    @Stable
+    data class WorkspaceScreen(val workspace: Workspace) : GhidraliteApplicationScreen() {
         @Composable
         @OptIn(KoinExperimentalAPI::class)
         override fun DecoratedWindowScope.content() {
@@ -78,7 +91,7 @@ fun GhidraliteApplicationRoot(viewModel: GhidraliteApplicationViewModel = viewMo
                 DecoratedWindow(
                     title = "Ghidralite",
                     icon = icon,
-                    onCloseRequest = { viewModel.screens.remove(screen) }
+                    onCloseRequest = { viewModel.screens.remove(screen) },
                 ) {
                     with(screen) {
                         content()

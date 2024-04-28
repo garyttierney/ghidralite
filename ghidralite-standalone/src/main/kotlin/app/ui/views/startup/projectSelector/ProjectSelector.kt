@@ -53,7 +53,6 @@ fun ProjectSelector(viewModel: ProjectSelectorViewModel = viewModel(), onWorkspa
         orientation = Orientation.Horizontal,
         color = JewelTheme.colorPalette.grey(4),
         thickness = 1.dp,
-        modifier = Modifier.padding(vertical = 8.dp)
     )
 
     val projectListModel = rememberSelectionModel(viewModel.recentProjects)
@@ -68,7 +67,6 @@ fun ProjectSelector(viewModel: ProjectSelectorViewModel = viewModel(), onWorkspa
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            PlaceholderIcon(it.name)
             Column(modifier = Modifier.weight(1f)) {
                 Text(it.name)
                 Hint(it.projectDir.toString())
@@ -80,7 +78,7 @@ fun ProjectSelector(viewModel: ProjectSelectorViewModel = viewModel(), onWorkspa
 @Composable
 fun ProjectSelectorHeader(filter: String, onFilterChanged: (String) -> Unit, onProjectSelectorOpened: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

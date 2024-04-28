@@ -36,8 +36,7 @@ fun ListingView(modifier: Modifier, program: ProgramDB) {
     val addressIndices by derivedStateOf { addressMap.indexCount.toInt() }
     val textStyle = JewelTheme.defaultTextStyle.copy(fontFamily = FontFamily(Font("/fonts/JetBrainsMono[wght].ttf")))
 
-    LazyColumn {
-
+    LazyColumn(modifier = modifier) {
         items(addressIndices) {
             val address = addressMap.getAddress(BigInteger.valueOf(it.toLong()))
             val codeUnit = program.codeManager.getCodeUnitAt(address)
@@ -51,7 +50,6 @@ fun ListingView(modifier: Modifier, program: ProgramDB) {
             }
         }
     }
-
 }
 
 @Composable
