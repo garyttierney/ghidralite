@@ -21,7 +21,7 @@ import io.github.garyttierney.ghidralite.core.index.EntityIndexer
 import io.github.garyttierney.ghidralite.core.index.storage.InMemoryIndex
 import io.github.garyttierney.ghidralite.core.search.SearchResult
 import io.github.garyttierney.ghidralite.core.search.Searcher
-import io.github.garyttierney.ghidralite.core.search.index.program.ProgramChangeWatcher
+import io.github.garyttierney.ghidralite.core.index.program.ProgramChangeWatcher
 import io.github.garyttierney.ghidralite.core.search.index.program.symbol.SymbolIndexLoader
 import io.github.garyttierney.ghidralite.core.search.symbol.SymbolProvider
 import io.github.garyttierney.ghidralite.extension.GhidralitePluginPackage
@@ -68,28 +68,31 @@ class QuickSearchPlugin(tool: PluginTool) : ProgramPlugin(tool), QuickSearchServ
         val symbolIndexLoader = SymbolIndexLoader(symbolDbTable)
         val symbolIndexer = EntityIndexer(symbolIndex, SymbolProvider())
 
-        TaskLauncher.launchModal("Indexing Program", MonitoredRunnable {
-            it.message = "Indexing Symbols"
+        TaskLauncher.launchModal(
+            "Indexing Program",
+            MonitoredRunnable {
+                it.message = "Indexing Symbols"
 
-            try {
-                runBlocking {
-                    symbolIndex.load(symbolIndexLoader)
-                }
+                try {
+                    runBlocking {
+                        symbolIndex.load(symbolIndexLoader)
+                    }
 
-                coroutineScope.launch(Dispatchers.IO) {
-                    symbolIndexer.index(
-                        programChangeWatcher.registerInterest<Symbol>(
-                            addedEvent = ChangeManager.DOCR_SYMBOL_ADDED,
-                            removedEvent = ChangeManager.DOCR_SYMBOL_REMOVED,
-                            ChangeManager.DOCR_SYMBOL_RENAMED,
-                            ChangeManager.DOCR_SYMBOL_SCOPE_CHANGED,
+                    coroutineScope.launch(Dispatchers.IO) {
+                        symbolIndexer.index(
+                            programChangeWatcher.registerInterest<Symbol>(
+                                addedEvent = ChangeManager.DOCR_SYMBOL_ADDED,
+                                removedEvent = ChangeManager.DOCR_SYMBOL_REMOVED,
+                                ChangeManager.DOCR_SYMBOL_RENAMED,
+                                ChangeManager.DOCR_SYMBOL_SCOPE_CHANGED,
+                            )
                         )
-                    )
+                    }
+                } catch (ignored: Exception) {
+                    logger.error("Failed to index program", ignored)
                 }
-            } catch (e: Exception) {
-                logger.error("Failed to index program", e)
             }
-        })
+        )
     }
 
     override suspend fun search(query: String, onResultAvailable: (List<SearchResult>) -> Unit) =

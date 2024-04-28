@@ -1,4 +1,4 @@
-package internal
+package io.github.garyttierney.ghidralite.ui.internal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,7 +19,7 @@ import org.jetbrains.jewel.ui.ComponentStyling
 import org.jetbrains.jewel.window.styling.TitleBarStyle
 
 @Composable
-internal fun PreviewComponent(content: @Composable() () -> Unit) {
+fun PreviewComponent(content: @Composable() () -> Unit) {
     val textStyle = JewelTheme.createDefaultTextStyle(fontFamily = FontFamily.Inter)
     val themeDefinition = JewelTheme.darkThemeDefinition(defaultTextStyle = textStyle)
 

@@ -5,15 +5,17 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.unit.dp
-import internal.PreviewComponent
+import io.github.garyttierney.ghidralite.ui.internal.PreviewComponent
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.lazy.tree.Tree
 import org.jetbrains.jewel.foundation.lazy.tree.buildTree
 import org.jetbrains.jewel.foundation.lazy.tree.rememberTreeState
 import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.foundation.theme.LocalContentColor
 import org.jetbrains.jewel.ui.component.*
-import org.jetbrains.jewel.ui.theme.treeStyle
 
 @OptIn(ExperimentalJewelApi::class)
 @Preview
@@ -44,6 +46,9 @@ fun ProgramTree() = PreviewComponent {
         )
     }
 
+    val color = Color.Red
+    val style = JewelTheme.defaultTextStyle
+    val textColor = color.takeOrElse { style.color.takeOrElse { LocalContentColor.current } }
 
     val treeState = rememberTreeState()
     treeState.openNodes(listOf(1, 2, 3))

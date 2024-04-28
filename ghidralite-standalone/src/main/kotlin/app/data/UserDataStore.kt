@@ -11,7 +11,7 @@ class UserDataStore {
 
     fun resolvePath(name: String) = Paths.get("data", "$name.json")
 
-    inline fun <reified T: Any> resolve() : UserData<T> {
+    inline fun <reified T : Any> resolve(): UserData<T> {
         val name = T::class.qualifiedName ?: error("No metadata available for configuration class")
         val path = resolvePath(name)
         val data = if (Files.exists(path)) {

@@ -12,8 +12,6 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import org.koin.compose.currentKoinScope
-import org.koin.compose.getKoin
-import org.koin.core.Koin
 import org.koin.core.scope.Scope
 import kotlin.reflect.KClass
 
@@ -45,7 +43,7 @@ private class ComposeViewModelStoreOwner : ViewModelStoreOwner {
 }
 
 @Composable
-private fun rememberComposeViewModelStoreOwner(): ViewModelStoreOwner {
+fun rememberComposeViewModelStoreOwner(): ViewModelStoreOwner {
     val viewModelStoreOwner = remember { ComposeViewModelStoreOwner() }
     DisposableEffect(viewModelStoreOwner) {
         onDispose { viewModelStoreOwner.dispose() }
