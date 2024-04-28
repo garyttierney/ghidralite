@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.5.0 (2024-04-28)
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+### Features
+* Feat/standalone improvements by @garyttierney in https://github.com/garyttierney/ghidralite/pull/31
+### Dependencies
+* chore(deps): bump composeDesktop from 1.6.10-dev1593 to 1.6.10-dev1608 by @dependabot in https://github.com/garyttierney/ghidralite/pull/32
+* chore(deps): bump org.jetbrains.androidx.navigation:navigation-compose from 2.8.0-dev1593 to 2.8.0-dev1608 by @dependabot in https://github.com/garyttierney/ghidralite/pull/33
+
+
+**Full Changelog**: https://github.com/garyttierney/ghidralite/compare/v0.4.0...v0.5.0
+
 ## 0.4.0 (2024-04-23)
 
 ## What's Changed
