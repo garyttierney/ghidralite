@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":ghidralite-ui"))
 
     implementation(libs.classgraph)
-    implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0-dev1593")
+    implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0-dev1623")
     implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-dev1608")
 
     implementation("ghidra:x86:11.0.3")
