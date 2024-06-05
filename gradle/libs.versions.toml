@@ -1,6 +1,6 @@
 [versions]
 classgraph = "4.8.172"
-composeDesktop = "1.6.10-dev1608"
+composeDesktop = "1.6.20-dev1667"
 detekt = "1.23.6"
 dokka = "1.9.20"
 ideaGradlePlugin = "1.1.8"
