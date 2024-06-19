@@ -1,5 +1,5 @@
 [versions]
-classgraph = "4.8.172"
+classgraph = "4.8.174"
 composeDesktop = "1.6.10-dev1608"
 detekt = "1.23.6"
 dokka = "1.9.20"
